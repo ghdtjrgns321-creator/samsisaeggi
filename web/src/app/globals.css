@@ -50,7 +50,7 @@ body {
    말풍선·꼬리가 겹치는 곳이 진해지지 않게 색이 아니라 핀 전체에 투명도를 준다 */
 .pin-place {
   --pin-color: #fb8c4b; /* 브랜드 주황(--primary)보다 연하게 */
-  opacity: 0.85;
+  opacity: 0.92;
 }
 .pin-place .pin-label {
   padding-left: 4px;
@@ -87,7 +87,10 @@ body {
   box-shadow: 0 0 0 6px rgba(41, 120, 242, 0.2);
 }
 
-/* 엔터 검색 결과 중 리뷰 없는 장소: 흰 말풍선 */
+/* 엔터 검색 결과 중 리뷰 없는 장소: 흰 말풍선 (투명도는 .pin-place와 같게) */
+.result-pin {
+  opacity: 0.92;
+}
 .result-pin .pin-label {
   background: #fff;
   color: var(--ink);
