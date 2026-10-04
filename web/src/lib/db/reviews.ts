@@ -1,9 +1,8 @@
-// 리뷰 읽기·쓰기 (DB reviews). 리뷰에 붙인 사진(photos.review_id)도 함께 읽는다
+// 리뷰 읽기·쓰기 (DB reviews)
 import type { PlaceBase } from "@/types/place";
 import type { Review } from "@/types/review";
 import { supabase } from "@/lib/supabase/client";
 import { ensureUserId } from "@/lib/supabase/auth";
-import { photoUrl } from "./photos";
 import { ensurePlaceRegistered } from "./places";
 
 type ReviewRow = {
@@ -17,7 +16,6 @@ type ReviewRow = {
   total_price: number | null;
   is_sample: boolean;
   created_at: string;
-  photos: { id: string; path: string; credit: string | null; is_sample: boolean; created_at: string }[];
 };
 
 function toReview(row: ReviewRow): Review {
@@ -32,9 +30,6 @@ function toReview(row: ReviewRow): Review {
     totalPrice: row.total_price,
     isSample: row.is_sample,
     createdAt: row.created_at,
-    photos: [...row.photos]
-      .sort((a, b) => a.created_at.localeCompare(b.created_at))
-      .map((p) => ({ id: p.id, url: photoUrl(p.path), credit: p.credit, isSample: p.is_sample })),
   };
 }
 
@@ -43,7 +38,7 @@ export async function fetchReviews(placeId: string): Promise<Review[]> {
   const { data, error } = await supabase
     .from("reviews")
     .select(
-      "id, rating, comment, purposes, meal_time, work_env, people, total_price, is_sample, created_at, photos(id, path, credit, is_sample, created_at)",
+      "id, rating, comment, purposes, meal_time, work_env, people, total_price, is_sample, created_at",
     )
     .eq("place_id", placeId)
     .order("created_at", { ascending: false });
