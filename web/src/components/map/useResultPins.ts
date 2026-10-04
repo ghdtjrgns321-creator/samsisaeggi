@@ -1,7 +1,7 @@
 "use client";
 
 // 엔터 검색 결과(리뷰 없는 장소)를 흰 말풍선 핀으로 그린다. 핀을 누르면 onSelect.
-// 화면에서 겹치는 말풍선은 우선순위(results 순서)가 낮은 쪽을 숨기고, 지도를 움직일 때마다 다시 계산한다.
+// 화면에서 겹치는 말풍선은 우선순위(results 순서)가 낮은 쪽을 작은 점으로 줄이고, 지도를 움직일 때마다 다시 계산한다.
 // 등록 장소 핀은 항상 보이므로 자리만 차지하는 장애물로 취급한다.
 import { useEffect, useRef } from "react";
 import type { Place, PlaceSummary } from "@/types/place";
@@ -33,7 +33,7 @@ export function useResultPins(
         position: new maps.LatLng(place.lat, place.lng),
         content,
         yAnchor: 1,
-        zIndex: 0, // 등록 장소 핀보다 아래
+        zIndex: 1, // 등록 장소 핀보다 아래. 점으로 줄면 0 (아래 layout)
         clickable: true,
       });
       return { place, content, overlay };
@@ -50,8 +50,12 @@ export function useResultPins(
         pins.map(({ place }) => toBox(place.name, place.lat, place.lng)),
         fixed,
       );
-      pins.forEach(({ content }, i) => {
-        content.style.display = visible.has(i) ? "" : "none";
+      // 자리를 못 얻은 곳은 숨기지 않고 작은 점으로: 가게가 있다는 건 보이고 눌러서 열 수 있게
+      // 점은 말풍선보다 한 층 아래 — 같은 층이면 나중에 그린 점이 말풍선을 덮는다
+      pins.forEach(({ content, overlay }, i) => {
+        const isDot = !visible.has(i);
+        content.classList.toggle("is-dot", isDot);
+        overlay.setZIndex(isDot ? 0 : 1);
       });
     };
 

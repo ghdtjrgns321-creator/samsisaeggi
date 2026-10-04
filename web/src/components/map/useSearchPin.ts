@@ -1,7 +1,7 @@
 "use client";
 
-// 미등록 장소(검색 결과·지도에서 누른 가게)에 임시 주황 핀을 하나만 띄운다. 핀을 누르면 onSelect.
-// null을 넘기거나 등록 장소를 넘기면 임시 핀을 지운다 (등록 장소는 이미 핀이 있음).
+// 지도 핀이 없는 장소(미등록·리뷰 0개)에 임시 주황 핀을 하나만 띄운다. 핀을 누르면 onSelect.
+// null을 넘기거나 리뷰 있는 장소를 넘기면 임시 핀을 지운다 (리뷰 있는 곳은 이미 핀이 있음).
 import { useCallback, useEffect, useRef } from "react";
 import type { KakaoMap } from "@/lib/kakao/sdk";
 import type { PlaceSummary } from "@/types/place";
@@ -19,7 +19,7 @@ export function useSearchPin(map: KakaoMap | null, onSelect: (place: PlaceSummar
     (place: PlaceSummary | null) => {
       pinRef.current?.setMap(null);
       pinRef.current = null;
-      if (!map || !place || place.reviewCount !== null) return;
+      if (!map || !place || (place.reviewCount ?? 0) > 0) return;
 
       const { maps } = window.kakao;
       const content = searchPinElement(place.name);
@@ -29,7 +29,7 @@ export function useSearchPin(map: KakaoMap | null, onSelect: (place: PlaceSummar
         position: new maps.LatLng(place.lat, place.lng),
         content,
         yAnchor: 1,
-        zIndex: 2,
+        zIndex: 3,
         clickable: true,
       });
     },

@@ -32,7 +32,7 @@ export function usePlacePins(
         position: new maps.LatLng(place.lat, place.lng),
         content,
         yAnchor: 1,
-        zIndex: named ? 2 : 1, // 이름 핀 > 별점 핀 > 검색 결과 핀
+        zIndex: named ? 3 : 2, // 이름 핀 > 별점 핀 > 검색 결과 핀(말풍선 1, 점 0)
         clickable: true, // 핀 클릭이 지도 클릭으로 번지지 않게
       });
     });

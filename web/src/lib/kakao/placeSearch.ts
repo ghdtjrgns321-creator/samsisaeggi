@@ -16,14 +16,19 @@ export type RawPlace = {
   distance: string; // 기준 위치를 줬을 때만 값이 있음 (m)
 };
 
+const CAFE = "CE7";
+const BAKERY = "제과,베이커리";
+
 export function toPlaceBase(raw: RawPlace): PlaceBase {
+  const category = raw.category_name.split(" > ").pop() ?? ""; // "음식점 > 한식 > 국밥" 중 마지막 단계
   return {
     id: raw.id,
     name: raw.place_name,
-    category: raw.category_name.split(" > ").pop() ?? "", // "음식점 > 한식 > 국밥" 중 마지막 단계
+    category,
     address: raw.road_address_name || raw.address_name,
     phone: raw.phone,
-    groupCode: raw.category_group_code,
+    // Kakao는 빵집을 음식점(음식점 > 간식 > 제과,베이커리)에 넣지만, 삼시세끼는 카페로 본다 (빵+커피, 휴식·미팅 용도)
+    groupCode: category === BAKERY ? CAFE : raw.category_group_code,
     lat: Number(raw.y),
     lng: Number(raw.x),
   };
@@ -78,8 +83,14 @@ export function searchPlacesInView(keyword: string, map: KakaoMap): Promise<Plac
   return collectInView((cb, options) => places.keywordSearch(keyword, cb, options), map);
 }
 
-/** 지금 지도 화면 안의 분류(음식점 FD6·카페 CE7) 장소 (필터 칩) */
-export function categoryPlacesInView(code: string, map: KakaoMap): Promise<PlaceBase[]> {
+/** 지금 지도 화면 안의 분류(음식점 FD6·카페 CE7) 장소. 빵집은 Kakao 음식점 분류에서 빼서 카페로 옮긴다 */
+export async function categoryPlacesInView(code: string, map: KakaoMap): Promise<PlaceBase[]> {
   const places = new window.kakao.maps.services.Places();
-  return collectInView((cb, options) => places.categorySearch(code, cb, options), map);
+  const [byCode, bakeries] = await Promise.all([
+    collectInView((cb, options) => places.categorySearch(code, cb, options), map),
+    code === CAFE ? collectInView((cb, options) => places.keywordSearch("베이커리", cb, options), map) : [],
+  ]);
+  // 같은 곳이 두 검색에 다 나오면 하나만 (Map은 처음 넣은 순서를 지킨다)
+  const matched = [...byCode, ...bakeries].filter((p) => p.groupCode === code);
+  return [...new Map(matched.map((p) => [p.id, p])).values()];
 }

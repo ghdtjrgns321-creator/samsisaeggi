@@ -5,9 +5,9 @@
 import { useCallback, useMemo, useRef, useState } from "react";
 import type { Place, PlaceSummary } from "@/types/place";
 import type { KakaoMap as KakaoMapInstance } from "@/lib/kakao/sdk";
-import { DEFAULT_CENTER, fitToPlaces, focusOn, panIntoView } from "@/lib/kakao/mapView";
+import { DEFAULT_CENTER, fitToPlaces, focusOn, panIntoView, panTo } from "@/lib/kakao/mapView";
 import { getLinkedPlaceId } from "@/lib/deepLink";
-import { EMPTY_FILTERS, KIND_GROUP, filtersSummary, hasReviewFilter, matchesFilters, type Filters } from "@/lib/filters";
+import { EMPTY_FILTERS, filtersSummary, hasReviewFilter, matchesFilters, matchesKind, type Filters } from "@/lib/filters";
 import type { LatLng } from "@/lib/geolocation";
 import KakaoMap from "./map/KakaoMap";
 import { useAreaSearch } from "./map/useAreaSearch";
@@ -41,6 +41,7 @@ export default function MapHome() {
   const [areaKeyword, setAreaKeyword] = useState<string | null>(null); // 엔터 검색어 (null = 검색 안 함)
   const [filters, setFilters] = useState<Filters>(EMPTY_FILTERS);
   const [myLocation, setMyLocation] = useState<LatLng | null>(null); // 내 위치 버튼으로 찾은 위치 (목록의 도보 시간)
+  const [listExpanded, setListExpanded] = useState(false); // 목록 시트를 펼쳤으면 내 위치 버튼을 숨김
   const [toast, setToast] = useState<string | null>(null);
   const toastTimerRef = useRef<ReturnType<typeof setTimeout>>(undefined);
 
@@ -85,18 +86,34 @@ export default function MapHome() {
     initView();
   };
 
-  // 핀을 누르면 카드를 띄우고, 핀이 카드에 가려질 때만 지도를 옮긴다
+  // 핀을 누르면 카드를 띄우고(근처 목록이 떠 있었으면 닫음), 핀이 카드에 가려질 때만 지도를 옮긴다
   const handlePinSelect = (place: PlaceSummary) => {
+    setCandidates(null);
     setSelected(place);
     if (map) panIntoView(map, place.lat, place.lng);
   };
 
-  // 지도 핀: 리뷰 있는 등록 장소 중 태그 조건에 맞는 곳. 지금 화면 안에서 리뷰 많은 상위 몇 곳만 이름까지
-  const pinnedPlaces = useMemo(
-    () => places.filter((p) => p.reviewCount > 0 && matchesFilters(p, filters)),
-    [places, filters],
-  );
   const bounds = useMapBounds(map);
+  // 둘러보기: 검색어 없이도 화면 안에 리뷰 있는 곳이 하나도 없으면(처음 보는 동네) 리뷰 없는 음식점·카페를 보여준다
+  const browse =
+    loaded !== null &&
+    bounds !== null &&
+    !areaKeyword &&
+    !hasReviewFilter(filters) &&
+    !places.some((p) => p.reviewCount > 0 && matchesKind(p, filters.kind) && isInBounds(bounds, p.lat, p.lng));
+
+  // 엔터 검색어(또는 둘러보기): 화면 안 결과를 말풍선으로. 대표적인 곳부터 보이고 확대할수록 더 드러남
+  const areaResults = useAreaSearch(map, { keyword: areaKeyword, kind: filters.kind, browse }, places, () => {
+    if (areaKeyword) showToast(`지금 화면에 '${areaKeyword}' 결과가 없어요`);
+  });
+  // 검색 중이면 등록 핀도 검색 결과에 나온 곳만 (null = 검색 안 함 → 전부)
+  const hitIds = useMemo(() => (areaKeyword ? new Set(areaResults.map((p) => p.id)) : null), [areaKeyword, areaResults]);
+
+  // 지도 핀: 리뷰 있는 등록 장소 중 태그 조건(·검색어)에 맞는 곳. 지금 화면 안에서 리뷰 많은 상위 몇 곳만 이름까지
+  const pinnedPlaces = useMemo(
+    () => places.filter((p) => p.reviewCount > 0 && matchesFilters(p, filters) && (!hitIds || hitIds.has(p.id))),
+    [places, filters, hitIds],
+  );
   // 상위 곳이 그대로면 같은 Set을 유지해 핀을 다시 그리지 않는다 (지도를 조금 움직일 때마다 깜빡이지 않게)
   const placesInView = useMemo(
     () => (bounds ? pinnedPlaces.filter((p) => isInBounds(bounds, p.lat, p.lng)) : pinnedPlaces),
@@ -112,7 +129,6 @@ export default function MapHome() {
 
   // 임시 핀이 필요한 선택(지도에서 누른 장소·근처 목록) → 임시 핀 + 카드
   const pickPlace = (place: PlaceSummary) => {
-    setCandidates(null);
     showTempPin(place);
     handlePinSelect(place);
   };
@@ -133,14 +149,13 @@ export default function MapHome() {
   // 지도 위 장소를 누름 → 1곳이면 카드, 여러 곳이면 근처 목록
   useTapToPick(map, places, { onPick: pickPlace, onCandidates: showCandidates, onMiss: closeAll });
 
-  // 엔터 검색어·장소 종류 태그: 화면 안 결과를 말풍선으로. 대표적인 곳부터 보이고 확대할수록 더 드러남
-  const areaResults = useAreaSearch(map, { keyword: areaKeyword, kind: filters.kind }, places, () => {
-    const kindLabel = KIND_GROUP.options.find((o) => o.value === filters.kind)?.label;
-    showToast(`지금 화면에 ${areaKeyword ? `'${areaKeyword}'` : kindLabel} 결과가 없어요`);
-  });
-  // 리뷰 값 태그(시간대·용도·작업 환경)가 켜지면 리뷰 없는 검색 결과는 조건을 알 수 없으므로 숨긴다
+  // 흰 말풍선 = 검색 결과 중 리뷰 없는 곳 (리뷰 있는 곳은 위 등록 핀으로 그림)
+  // 리뷰 값 태그(시간대·용도·작업 환경)가 켜지면 리뷰 없는 곳은 조건을 알 수 없으므로 숨긴다
   // useMemo: 렌더마다 새 배열이 되면 말풍선을 매번 다시 그리게 되므로 고정
-  const visibleResults = useMemo(() => (hasReviewFilter(filters) ? [] : areaResults), [filters, areaResults]);
+  const visibleResults = useMemo(
+    () => (hasReviewFilter(filters) ? [] : areaResults.filter((p) => !p.reviewCount)),
+    [filters, areaResults],
+  );
   useResultPins(map, visibleResults, pinnedPlaces, namedIds, handlePinSelect);
 
   // 태그: 리뷰 값 태그를 새로 켰는데 맞는 등록 장소가 없으면 바로 알려준다
@@ -165,6 +180,14 @@ export default function MapHome() {
     if (map) focusOn(map, result.lat, result.lng);
   };
 
+  // 목록에서 고름: 내 찜은 화면 밖일 수 있으니 항상 그 장소로 옮기고, 핀이 없는 곳(리뷰 0개)은 임시 핀
+  const handleListSelect = (place: Place) => {
+    setListExpanded(false); // 카드를 닫고 돌아오면 목록은 접힌 상태로 다시 나타남
+    showTempPin(place);
+    setSelected(place);
+    if (map) panTo(map, place.lat, place.lng);
+  };
+
   // 선택한 장소가 등록 장소면 최신 집계(별점·요약)를 쓴다
   const selectedPlace = selected ? places.find((p) => p.id === selected.id) : undefined;
 
@@ -181,9 +204,11 @@ export default function MapHome() {
       <FilterChips filters={filters} onChange={handleFiltersChange} />
 
       <div className="pointer-events-none absolute inset-x-0 bottom-0 z-10 flex flex-col items-end gap-3">
-        <div className="pointer-events-auto mr-4 mb-3 last:mb-6">
-          <MyLocationButton map={map} onToast={showToast} onLocated={setMyLocation} />
-        </div>
+        {!(listExpanded && !selected && !candidates) && (
+          <div className="pointer-events-auto mr-4 mb-3 last:mb-6">
+            <MyLocationButton map={map} onToast={showToast} onLocated={setMyLocation} />
+          </div>
+        )}
         {selected && (
           <div className="pointer-events-auto w-full">
             {/* key: 다른 장소를 고르면 접힌 상태로 새로 시작 */}
@@ -208,11 +233,16 @@ export default function MapHome() {
           <div className="pointer-events-auto w-full">
             <PlaceListSheet
               places={placesInView}
+              allPlaces={places}
               regionName={regionName}
               filtersLabel={filtersSummary(filters)}
               myLocation={myLocation}
               maxHeight={mainHeight}
-              onSelect={handlePinSelect}
+              onSelect={handleListSelect}
+              onError={showToast}
+              onExpandedChange={setListExpanded}
+              onLocated={setMyLocation}
+              onPlacesChanged={reloadPlaces}
             />
           </div>
         )}
