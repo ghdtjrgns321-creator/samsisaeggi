@@ -77,18 +77,7 @@ body {
 .result-pin .pin-tail {
   background: #fff;
 }
-/* 말풍선 자리가 없을 때: 이름 없이 작은 흰 점 (padding은 손가락으로 누를 여유) */
-.result-pin.is-dot {
-  padding: 6px;
-}
-.result-pin.is-dot .pin-label {
+/* 화면 안 상위 몇 곳에 못 들거나 자리가 없는 흰 말풍선은 숨김 */
+.result-pin.is-hidden {
   display: none;
-}
-.result-pin.is-dot .pin-tail {
-  width: 8px;
-  height: 8px;
-  margin: 0;
-  transform: none;
-  border-radius: 999px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.35);
 }
