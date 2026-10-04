@@ -2,9 +2,17 @@
 
 // 길찾기 앱 선택 시트 (디자인 보드 02-3): 네이버 지도 · 카카오맵 · 티맵
 import type { PlaceBase } from "@/types/place";
-import { isMobileDevice, kakaoDirectionsUrl, naverDirectionsUrl, tmapDirectionsUrl } from "@/lib/directions";
+import { isMobileDevice, kakaoDirectionsUrl, naverAppDirectionsUrl, naverDirectionsUrl, tmapDirectionsUrl } from "@/lib/directions";
 
-const TMAP_CHECK_MS = 1500;
+const APP_CHECK_MS = 1500;
+
+// 앱이 열리면 페이지가 숨겨진다. 그대로 보이면 미설치로 판단
+function openApp(url: string, onMissing: () => void) {
+  window.location.href = url;
+  setTimeout(() => {
+    if (document.visibilityState === "visible") onMissing();
+  }, APP_CHECK_MS);
+}
 
 type Props = {
   place: PlaceBase;
@@ -42,11 +50,19 @@ export default function DirectionsSheet({ place, onClose, onToast }: Props) {
       onToast("티맵은 휴대폰에서만 열 수 있어요");
       return;
     }
-    // 앱이 열리면 페이지가 숨겨진다. 그대로 보이면 미설치로 판단
-    window.location.href = tmapDirectionsUrl(place);
-    setTimeout(() => {
-      if (document.visibilityState === "visible") onToast("티맵 앱이 설치되어 있지 않아요");
-    }, TMAP_CHECK_MS);
+    openApp(tmapDirectionsUrl(place), () => onToast("티맵 앱이 설치되어 있지 않아요"));
+  };
+
+  // 휴대폰은 네이버 지도 앱으로, 앱이 없거나 PC면 웹으로
+  const openNaver = () => {
+    const web = naverDirectionsUrl(place);
+    if (!isMobileDevice()) {
+      window.open(web, "_blank", "noopener,noreferrer");
+      return;
+    }
+    openApp(naverAppDirectionsUrl(place), () => {
+      window.location.href = web;
+    });
   };
 
   return (
@@ -63,7 +79,7 @@ export default function DirectionsSheet({ place, onClose, onToast }: Props) {
             {place.name} · {place.address}
           </p>
         </div>
-        <AppRow badge="N" color="#03c75a" name="네이버 지도" href={naverDirectionsUrl(place)} />
+        <AppRow badge="N" color="#03c75a" name="네이버 지도" onClick={openNaver} />
         <AppRow badge="K" color="#fee500" textColor="#191919" name="카카오맵" href={kakaoDirectionsUrl(place)} />
         <AppRow badge="T" color="#ef2d56" name="티맵" onClick={openTmap} />
         <div className="px-5 pt-2">

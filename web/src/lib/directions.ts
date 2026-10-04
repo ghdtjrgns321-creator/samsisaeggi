@@ -3,7 +3,7 @@ import type { PlaceBase } from "@/types/place";
 
 export type DirectionsApp = "naver" | "kakao" | "tmap";
 
-/** 네이버 지도 웹 (휴대폰에선 앱이 있으면 앱으로 열림). 대중교통 경로 */
+/** 네이버 지도 웹. 대중교통 경로 (PC, 또는 휴대폰에 앱이 없을 때) */
 export function naverDirectionsUrl(place: PlaceBase): string {
   const params = new URLSearchParams({
     elng: String(place.lng),
@@ -13,6 +13,17 @@ export function naverDirectionsUrl(place: PlaceBase): string {
     pathType: "1",
   });
   return `https://map.naver.com/index.nhn?${params}`;
+}
+
+/** 네이버 지도 앱 대중교통 길찾기 (휴대폰 + 앱 설치 시에만 동작). appname = 호출한 서비스 식별자 */
+export function naverAppDirectionsUrl(place: PlaceBase): string {
+  const params = new URLSearchParams({
+    dlat: String(place.lat),
+    dlng: String(place.lng),
+    dname: place.name,
+    appname: window.location.hostname,
+  });
+  return `nmap://route/public?${params}`;
 }
 
 /** 카카오맵 웹 (휴대폰에선 앱이 있으면 앱으로 열림) */
