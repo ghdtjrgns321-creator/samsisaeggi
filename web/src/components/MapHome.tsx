@@ -15,7 +15,7 @@ import MyLocationButton from "./map/MyLocationButton";
 import { usePlacePins } from "./map/usePlacePins";
 import { isInBounds, trimBottom, useMapBounds } from "./map/useMapBounds";
 import { useRegionName } from "./map/useRegionName";
-import PlaceListSheet, { LIST_COLLAPSED_HEIGHT } from "./list/PlaceListSheet";
+import PlaceListSheet, { listCoverHeight, type ListLevel } from "./list/PlaceListSheet";
 import { useResultPins } from "./map/useResultPins";
 import { useSearchPin } from "./map/useSearchPin";
 import { useTapToPick } from "./map/useTapToPick";
@@ -41,7 +41,7 @@ export default function MapHome() {
   const [areaKeyword, setAreaKeyword] = useState<string | null>(null); // 엔터 검색어 (null = 검색 안 함)
   const [filters, setFilters] = useState<Filters>(EMPTY_FILTERS);
   const [myLocation, setMyLocation] = useState<LatLng | null>(null); // 내 위치 버튼으로 찾은 위치 (목록의 도보 시간)
-  const [listExpanded, setListExpanded] = useState(false); // 목록 시트를 펼쳤으면 내 위치 버튼을 숨김
+  const [listLevel, setListLevel] = useState<ListLevel>("peek"); // 목록 시트 단계 (펼치면 내 위치 버튼을 숨김)
   const [toast, setToast] = useState<string | null>(null);
   const toastTimerRef = useRef<ReturnType<typeof setTimeout>>(undefined);
 
@@ -93,11 +93,11 @@ export default function MapHome() {
     if (map) panIntoView(map, place.lat, place.lng);
   };
 
-  // 목록 시트(접힌 상태)에 가려진 아래쪽은 빼고 실제로 보이는 지도 범위로 목록·동 이름·둘러보기를 정한다
+  // 목록 시트(단계별 높이)에 가려진 아래쪽은 빼고 실제로 보이는 지도 범위로 목록·동 이름·둘러보기를 정한다
   const mapBounds = useMapBounds(map);
   const bounds = useMemo(
-    () => (mapBounds ? trimBottom(mapBounds, LIST_COLLAPSED_HEIGHT, mainHeight) : null),
-    [mapBounds, mainHeight],
+    () => (mapBounds ? trimBottom(mapBounds, listCoverHeight(listLevel), mainHeight) : null),
+    [mapBounds, listLevel, mainHeight],
   );
   // 둘러보기: 검색어 없이도 화면 안에 리뷰 있는 곳이 하나도 없으면(처음 보는 동네) 리뷰 없는 음식점·카페를 보여준다
   const browse =
@@ -164,7 +164,7 @@ export default function MapHome() {
     () => (hasReviewFilter(filters) ? [] : areaResults.filter((p) => !p.reviewCount)),
     [filters, areaResults],
   );
-  useResultPins(map, visibleResults, pinnedPlaces, namedIds, pickPlace, MAP_TOP_COVER_PX, LIST_COLLAPSED_HEIGHT);
+  useResultPins(map, visibleResults, pinnedPlaces, namedIds, pickPlace, MAP_TOP_COVER_PX, listCoverHeight(listLevel));
 
   // 태그: 리뷰 값 태그를 새로 켰는데 맞는 등록 장소가 없으면 바로 알려준다
   const handleFiltersChange = (next: Filters) => {
@@ -190,7 +190,7 @@ export default function MapHome() {
 
   // 목록에서 고름: 내 찜은 화면 밖일 수 있으니 항상 그 장소로 옮기고, 핀이 없는 곳(리뷰 0개)은 임시 핀
   const handleListSelect = (place: Place) => {
-    setListExpanded(false); // 카드를 닫고 돌아오면 목록은 접힌 상태로 다시 나타남
+    setListLevel("peek"); // 카드를 닫고 돌아오면 목록은 접힌 상태로 다시 나타남
     showTempPin(place);
     setSelected(place);
     if (map) panTo(map, place.lat, place.lng);
@@ -212,7 +212,7 @@ export default function MapHome() {
       <FilterChips filters={filters} onChange={handleFiltersChange} />
 
       <div className="pointer-events-none absolute inset-x-0 bottom-0 z-10 flex flex-col items-end gap-3">
-        {!(listExpanded && !selected && !candidates) && (
+        {!(listLevel === "full" && !selected && !candidates) && (
           <div className="pointer-events-auto mr-4 mb-3 last:mb-6">
             <MyLocationButton map={map} onToast={showToast} onLocated={setMyLocation} />
           </div>
@@ -249,7 +249,8 @@ export default function MapHome() {
               maxHeight={mainHeight}
               onSelect={handleListSelect}
               onError={showToast}
-              onExpandedChange={setListExpanded}
+              level={listLevel}
+              onLevelChange={setListLevel}
               onLocated={setMyLocation}
               onPlacesChanged={reloadPlaces}
             />

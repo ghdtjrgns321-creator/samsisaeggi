@@ -1,9 +1,11 @@
 "use client";
 
-// 첫 화면 하단 목록 시트.
-//  - 접힌 상태: "송도2동 · 점심 7곳  랭킹순▾" + 목록 1.5줄(아래가 잘려 끌어올릴 수 있다는 표시)
-//  - 펼친 상태: [지역 랭킹 | 내 찜 N] 탭. 검색창은 가리지 않도록 그 아래까지만 펼친다.
-// 손잡이·제목을 끌거나 누르면 펼치고 접는다. 목록 위에서도 위로 끌면 펼치고, 맨 위에서 아래로 끌면 접는다.
+// 첫 화면 하단 목록 시트. 세 단계(min ↔ peek ↔ full)를 끌어서 오간다.
+//  - min(내림): 손잡이 + 제목 한 줄만. 지도를 넓게 볼 때
+//  - peek(접힘, 처음 상태): "송도2동 · 점심 7곳  랭킹순▾" + 목록 1.5줄(아래가 잘려 끌어올릴 수 있다는 표시)
+//  - full(펼침): [지역 랭킹 | 내 찜 N] 탭. 검색창은 가리지 않도록 그 아래까지만 펼친다.
+// 손잡이·제목을 끌면 한 단계씩 오르내리고, 누르면 min·peek는 한 단계 위로, full은 peek로.
+// 목록 위에서도 위로 끌면 펼치고, 맨 위에서 아래로 끌면 내린다.
 import { useCallback, useEffect, useState } from "react";
 import type { Place } from "@/types/place";
 import type { LatLng } from "@/lib/geolocation";
@@ -13,8 +15,20 @@ import { useVerticalDrag } from "@/hooks/useVerticalDrag";
 import FavoritesTab from "./FavoritesTab";
 import PlaceListItem from "./PlaceListItem";
 
-export const LIST_COLLAPSED_HEIGHT = 210; // 손잡이 + 제목 + 목록 1.5줄 (지도 홈이 가려진 부분을 뺄 때도 씀)
+const MIN_HEIGHT = 56; // 손잡이 + 제목 한 줄
+const PEEK_HEIGHT = 210; // 손잡이 + 제목 + 목록 1.5줄
 const TOP_GAP = 72; // 펼쳤을 때 위에 남길 공간 (검색창)
+
+export type ListLevel = "min" | "peek" | "full";
+
+/** 단계별로 지도 아래쪽을 가리는 높이 (지도 홈이 보이는 범위를 계산할 때). full은 거의 다 가리므로 peek 기준 */
+export function listCoverHeight(level: ListLevel): number {
+  return level === "min" ? MIN_HEIGHT : PEEK_HEIGHT;
+}
+
+const LEVELS: ListLevel[] = ["min", "peek", "full"];
+const step = (level: ListLevel, by: 1 | -1) =>
+  LEVELS[Math.min(LEVELS.length - 1, Math.max(0, LEVELS.indexOf(level) + by))];
 
 type Tab = "ranking" | "favorites";
 
@@ -27,7 +41,8 @@ type Props = {
   maxHeight: number;
   onSelect: (place: Place) => void;
   onError: (msg: string) => void;
-  onExpandedChange: (expanded: boolean) => void; // 펼치면 내 위치 버튼을 숨기기 위해
+  level: ListLevel;
+  onLevelChange: (level: ListLevel) => void; // 지도 홈이 들고 있음 (내 위치 버튼 숨김·보이는 범위 계산)
   onLocated: (at: LatLng) => void; // 내 찜 거리순에서 위치를 찾았을 때
   onPlacesChanged: () => void; // 내 찜에서 찜을 풀었을 때 등록 장소(찜 수) 다시 불러오기
 };
@@ -55,22 +70,19 @@ export default function PlaceListSheet({
   maxHeight,
   onSelect,
   onError,
-  onExpandedChange,
+  level,
+  onLevelChange,
   onLocated,
   onPlacesChanged,
 }: Props) {
-  const [expanded, setExpandedState] = useState(false);
-  const setExpanded = (next: boolean) => {
-    setExpandedState(next);
-    onExpandedChange(next);
-  };
+  const expanded = level === "full";
   const [tab, setTab] = useState<Tab>("ranking");
   const [sort, setSort] = useState<SortKey>("ranking");
   const [favorites, setFavorites] = useState<MyFavorite[]>([]);
   const { dy, dragging, bind, bindScroll } = useVerticalDrag({
-    onUp: () => setExpanded(true),
-    onDown: () => setExpanded(false),
-    onTap: () => setExpanded(!expanded),
+    onUp: () => onLevelChange(step(level, 1)),
+    onDown: () => onLevelChange(step(level, -1)),
+    onTap: () => onLevelChange(expanded ? "peek" : step(level, 1)),
     expanded,
   });
 
@@ -82,9 +94,9 @@ export default function PlaceListSheet({
   }, [onError]);
   useEffect(loadFavorites, [loadFavorites]);
 
-  const expandedHeight = Math.max(LIST_COLLAPSED_HEIGHT, maxHeight - TOP_GAP);
-  const base = expanded ? expandedHeight : LIST_COLLAPSED_HEIGHT;
-  const height = Math.min(expandedHeight, Math.max(LIST_COLLAPSED_HEIGHT, base - dy));
+  const expandedHeight = Math.max(PEEK_HEIGHT, maxHeight - TOP_GAP);
+  const base = { min: MIN_HEIGHT, peek: PEEK_HEIGHT, full: expandedHeight }[level];
+  const height = Math.min(expandedHeight, Math.max(MIN_HEIGHT, base - dy));
 
   const favoriteCount = favorites.filter((f) => allPlaces.some((p) => p.id === f.placeId)).length;
   const showFavorites = expanded && tab === "favorites";
