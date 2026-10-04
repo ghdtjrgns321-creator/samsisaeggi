@@ -1,0 +1,55 @@
+@import "tailwindcss";
+
+/* 디자인 보드 색상 토큰 */
+:root {
+  --primary: #d04a02;
+  --primary-soft: #fdefe7;
+  --ink: #111111;
+  --gray: #737373;
+  --line: #e6e6e6;
+  --surface: #f6f6f6;
+  --cafe: #8b5a2b;
+}
+
+@theme inline {
+  --color-primary: var(--primary);
+  --color-primary-soft: var(--primary-soft);
+  --color-ink: var(--ink);
+  --color-gray: var(--gray);
+  --color-line: var(--line);
+  --color-surface: var(--surface);
+  --font-sans: var(--font-noto-sans-kr);
+}
+
+body {
+  background: #ffffff;
+  color: var(--ink);
+}
+
+/* 지도 핀 (Kakao CustomOverlay에 직접 넣는 DOM이라 일반 CSS로 작성) */
+.pin {
+  --pin-color: var(--ink);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.pin-cafe {
+  --pin-color: var(--cafe);
+}
+.pin-label {
+  background: var(--pin-color);
+  color: #fff;
+  border-radius: 999px;
+  padding: 5px 9px;
+  font-size: 12px;
+  font-weight: 700;
+  white-space: nowrap;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+}
+.pin-tail {
+  width: 9px;
+  height: 9px;
+  background: var(--pin-color);
+  transform: rotate(45deg);
+  margin-top: -5px;
+}
