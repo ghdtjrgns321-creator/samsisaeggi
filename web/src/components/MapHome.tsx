@@ -124,14 +124,15 @@ export default function MapHome() {
     .sort()
     .join(",");
   const namedIds = useMemo(() => new Set(namedKey.split(",")), [namedKey]);
-  usePlacePins(map, pinnedPlaces, namedIds, handlePinSelect);
   const showTempPin = useSearchPin(map, handlePinSelect);
 
-  // 임시 핀이 필요한 선택(지도에서 누른 장소·근처 목록) → 임시 핀 + 카드
+  // 지도에서 장소를 고름(핀·말풍선·지도 위 장소·근처 목록) → 카드 + 임시 핀을 그 장소로 옮김
+  // (리뷰 있는 등록 장소면 임시 핀은 지워진다 — 이미 핀이 있음)
   const pickPlace = (place: PlaceSummary) => {
     showTempPin(place);
     handlePinSelect(place);
   };
+  usePlacePins(map, pinnedPlaces, namedIds, pickPlace);
 
   // 여러 장소 목록 → 카드·임시 핀은 닫고 목록만
   const showCandidates = (list: PlaceSummary[]) => {
@@ -156,7 +157,7 @@ export default function MapHome() {
     () => (hasReviewFilter(filters) ? [] : areaResults.filter((p) => !p.reviewCount)),
     [filters, areaResults],
   );
-  useResultPins(map, visibleResults, pinnedPlaces, namedIds, handlePinSelect);
+  useResultPins(map, visibleResults, pinnedPlaces, namedIds, pickPlace);
 
   // 태그: 리뷰 값 태그를 새로 켰는데 맞는 등록 장소가 없으면 바로 알려준다
   const handleFiltersChange = (next: Filters) => {
