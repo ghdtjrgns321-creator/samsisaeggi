@@ -89,7 +89,7 @@ export default function ReviewForm({ place, onClose, onSaved }: Props) {
   };
 
   return createPortal(
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
+    <div data-modal className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
       <div
         role="dialog"
         aria-label="리뷰 남기기"

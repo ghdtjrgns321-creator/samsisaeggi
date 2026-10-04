@@ -66,7 +66,7 @@ export default function DirectionsSheet({ place, onClose, onToast }: Props) {
   };
 
   return (
-    <div className="fixed inset-0 z-30 flex items-end bg-black/40" onClick={onClose}>
+    <div data-modal className="fixed inset-0 z-30 flex items-end bg-black/40" onClick={onClose}>
       <div
         role="dialog"
         aria-label="길찾기 앱 선택"
