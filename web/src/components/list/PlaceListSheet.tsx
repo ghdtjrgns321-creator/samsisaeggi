@@ -3,7 +3,7 @@
 // 첫 화면 하단 목록 시트.
 //  - 접힌 상태: "송도2동 · 점심 7곳  랭킹순▾" + 목록 1.5줄(아래가 잘려 끌어올릴 수 있다는 표시)
 //  - 펼친 상태: [지역 랭킹 | 내 찜 N] 탭. 검색창은 가리지 않도록 그 아래까지만 펼친다.
-// 손잡이·제목을 끌거나 누르면 펼치고 접는다.
+// 손잡이·제목을 끌거나 누르면 펼치고 접는다. 목록 위에서도 위로 끌면 펼치고, 맨 위에서 아래로 끌면 접는다.
 import { useCallback, useEffect, useState } from "react";
 import type { Place } from "@/types/place";
 import type { LatLng } from "@/lib/geolocation";
@@ -67,10 +67,11 @@ export default function PlaceListSheet({
   const [tab, setTab] = useState<Tab>("ranking");
   const [sort, setSort] = useState<SortKey>("ranking");
   const [favorites, setFavorites] = useState<MyFavorite[]>([]);
-  const { dy, dragging, bind } = useVerticalDrag({
+  const { dy, dragging, bind, bindScroll } = useVerticalDrag({
     onUp: () => setExpanded(true),
     onDown: () => setExpanded(false),
     onTap: () => setExpanded(!expanded),
+    expanded,
   });
 
   // 시트가 다시 나타날 때마다(카드를 닫고 돌아올 때 등) 내 찜을 새로 읽는다
@@ -134,7 +135,10 @@ export default function PlaceListSheet({
         </div>
       )}
 
-      <div className={`min-h-0 flex-1 px-5 ${expanded ? "overflow-y-auto" : "overflow-hidden"}`}>
+      <div
+        {...bindScroll}
+        className={`min-h-0 flex-1 overscroll-none px-5 ${expanded && !dragging ? "overflow-y-auto" : "overflow-hidden"}`}
+      >
         {showFavorites ? (
           <FavoritesTab
             favorites={favorites}

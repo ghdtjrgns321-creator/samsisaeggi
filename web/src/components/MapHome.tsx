@@ -220,6 +220,7 @@ export default function MapHome() {
               maxHeight={mainHeight}
               onToast={showToast}
               onChanged={reloadPlaces}
+              onClose={closeAll}
             />
           </div>
         )}
