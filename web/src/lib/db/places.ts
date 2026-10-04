@@ -15,6 +15,7 @@ type PlaceStatsRow = {
   rating: number | null;
   meal_times: string[];
   purposes: string[];
+  work_envs: string[];
   max_people: number | null;
   price_per_person: number | null;
   favorite_count: number;
@@ -35,6 +36,7 @@ function toPlace(row: PlaceStatsRow): Place {
     rating: row.rating,
     mealTimes: row.meal_times,
     purposes: row.purposes,
+    workEnvs: row.work_envs,
     maxPeople: row.max_people,
     pricePerPerson: row.price_per_person,
     favoriteCount: row.favorite_count,

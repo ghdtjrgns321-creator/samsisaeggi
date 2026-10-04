@@ -23,6 +23,7 @@ export type Place = PlaceBase & {
   rating: number | null; // 리뷰 없으면 null
   mealTimes: string[]; // 리뷰에 나온 시간대 (중복 포함)
   purposes: string[]; // 리뷰에 나온 용도 (중복 포함)
+  workEnvs: string[]; // 리뷰에 나온 카페 작업 환경 (중복 포함)
   maxPeople: number | null;
   pricePerPerson: number | null; // 1인 가격 중앙값
   favoriteCount: number;

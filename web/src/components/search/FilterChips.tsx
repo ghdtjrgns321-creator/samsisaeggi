@@ -1,15 +1,14 @@
-// 검색창 아래 필터 줄 (옆으로 넘김). 묶음(종류·시간대·용도·가격)마다 칩 하나, 누르면 아래로 펼쳐 하나를 고른다.
+// 검색창 아래 필터 줄 (옆으로 넘김). 종류 칩 + 종류에 맞는 리뷰 태그 묶음마다 칩 하나, 누르면 아래로 펼쳐 하나를 고른다.
 // 펼친 목록은 넘김 줄 밖에 띄운다 — 줄 안에 두면 overflow에 잘린다.
 import { useEffect, useRef, useState, type MouseEvent } from "react";
-import { FILTER_GROUPS, type FilterKey, type FilterOption, type Filters } from "@/lib/filters";
+import { KIND_GROUP, tagGroupsFor, withKind, type FilterGroup, type FilterKey, type FilterOption, type Filters } from "@/lib/filters";
 
-type Group = (typeof FILTER_GROUPS)[number];
 type Open = { key: FilterKey; left: number };
 
 const PANEL_WIDTH = 132;
 
-function GroupChip({ group, value, open, onClick }: { group: Group; value: string | null; open: boolean; onClick: (e: MouseEvent<HTMLButtonElement>) => void }) {
-  const picked = (group.options as readonly FilterOption[]).find((o) => o.value === value);
+function GroupChip({ group, value, open, onClick }: { group: FilterGroup; value: string | null; open: boolean; onClick: (e: MouseEvent<HTMLButtonElement>) => void }) {
+  const picked = group.options.find((o) => o.value === value);
   const shown = picked ?? group;
   return (
     <button
@@ -73,16 +72,17 @@ export default function FilterChips({ filters, onChange }: Props) {
 
   const pick = (key: FilterKey, value: string | null) => {
     setOpen(null);
-    onChange({ ...filters, [key]: value });
+    onChange(key === "kind" ? withKind(filters, value) : { ...filters, [key]: value });
   };
 
-  const openGroup = open && FILTER_GROUPS.find((g) => g.key === open.key);
+  const groups = [KIND_GROUP, ...tagGroupsFor(filters.kind)];
+  const openGroup = open && groups.find((g) => g.key === open.key);
 
   return (
     <div ref={rootRef} className="absolute inset-x-0 top-[72px] z-[5]">
       {/* 줄을 넘기면 칩 위치가 바뀌므로 펼친 목록을 닫는다 */}
       <div onScroll={() => setOpen(null)} className="flex items-center gap-1.5 overflow-x-auto px-4 pb-1 [scrollbar-width:none]">
-        {FILTER_GROUPS.map((group) => (
+        {groups.map((group) => (
           <GroupChip
             key={group.key}
             group={group}

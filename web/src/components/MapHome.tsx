@@ -7,7 +7,7 @@ import type { Place, PlaceSummary } from "@/types/place";
 import type { KakaoMap as KakaoMapInstance } from "@/lib/kakao/sdk";
 import { DEFAULT_CENTER, fitToPlaces, focusOn, panIntoView } from "@/lib/kakao/mapView";
 import { getLinkedPlaceId } from "@/lib/deepLink";
-import { EMPTY_FILTERS, FILTER_GROUPS, hasReviewFilter, matchesFilters, type Filters } from "@/lib/filters";
+import { EMPTY_FILTERS, KIND_GROUP, hasReviewFilter, matchesFilters, type Filters } from "@/lib/filters";
 import KakaoMap from "./map/KakaoMap";
 import { useAreaSearch } from "./map/useAreaSearch";
 import MyLocationButton from "./map/MyLocationButton";
@@ -128,10 +128,10 @@ export default function MapHome() {
 
   // 엔터 검색어·장소 종류 태그: 화면 안 결과를 말풍선으로. 대표적인 곳부터 보이고 확대할수록 더 드러남
   const areaResults = useAreaSearch(map, { keyword: areaKeyword, kind: filters.kind }, places, () => {
-    const kindLabel = FILTER_GROUPS[0].options.find((o) => o.value === filters.kind)?.label;
+    const kindLabel = KIND_GROUP.options.find((o) => o.value === filters.kind)?.label;
     showToast(`지금 화면에 ${areaKeyword ? `'${areaKeyword}'` : kindLabel} 결과가 없어요`);
   });
-  // 리뷰 값 태그(시간대·용도·가격)가 켜지면 리뷰 없는 검색 결과는 조건을 알 수 없으므로 숨긴다
+  // 리뷰 값 태그(시간대·용도·작업 환경)가 켜지면 리뷰 없는 검색 결과는 조건을 알 수 없으므로 숨긴다
   // useMemo: 렌더마다 새 배열이 되면 말풍선을 매번 다시 그리게 되므로 고정
   const visibleResults = useMemo(() => (hasReviewFilter(filters) ? [] : areaResults), [filters, areaResults]);
   useResultPins(map, visibleResults, pinnedPlaces, namedIds, handlePinSelect);
