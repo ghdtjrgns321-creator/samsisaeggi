@@ -67,3 +67,13 @@ body {
   border: 3px solid #fff;
   box-shadow: 0 0 0 6px rgba(41, 120, 242, 0.2);
 }
+
+/* 엔터 검색 결과 중 리뷰 없는 장소: 흰 말풍선 */
+.result-pin .pin-label {
+  background: #fff;
+  color: var(--ink);
+  box-shadow: 0 0 0 1px var(--line), 0 2px 6px rgba(0, 0, 0, 0.15);
+}
+.result-pin .pin-tail {
+  background: #fff;
+}

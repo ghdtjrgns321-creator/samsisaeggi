@@ -1,12 +1,14 @@
 "use client";
 
 // 상단 검색창: 입력하면 잠시 뒤 자동 검색 → 정렬 → 결과 목록. 고른 결과는 onSelect로 넘긴다.
+// 엔터를 누르면 목록을 닫고 onSubmitSearch(지도 화면 안 결과를 핀으로), ✕를 누르면 onClear.
 // 검색창 밖을 누르면 목록을 닫고, 다시 입력창을 누르면 직전 결과를 다시 연다.
 import { useCallback, useEffect, useRef, useState } from "react";
 import type { Place } from "@/data/places";
 import type { KakaoMap } from "@/lib/kakao/sdk";
 import { searchPlaces } from "@/lib/kakao/placeSearch";
-import { rankResults, type SearchResult } from "@/lib/search/rankResults";
+import { rankResults } from "@/lib/search/rankResults";
+import type { PlaceSummary } from "@/types/place";
 import { useDebouncedValue } from "@/hooks/useDebouncedValue";
 import { useClickOutside } from "@/hooks/useClickOutside";
 import SearchResultList from "./SearchResultList";
@@ -16,15 +18,17 @@ const SEARCH_DELAY_MS = 300;
 type Props = {
   map: KakaoMap | null;
   registered: Place[];
-  onSelect: (result: SearchResult) => void;
+  onSelect: (result: PlaceSummary) => void;
+  onSubmitSearch: (keyword: string) => void;
+  onClear: () => void;
 };
 
-export default function SearchBar({ map, registered, onSelect }: Props) {
+export default function SearchBar({ map, registered, onSelect, onSubmitSearch, onClear }: Props) {
   const containerRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const [keyword, setKeyword] = useState("");
   // query: 이 결과를 만든 검색어 ("" = 아직 결과 없음)
-  const [results, setResults] = useState<{ query: string; items: SearchResult[] }>({ query: "", items: [] });
+  const [results, setResults] = useState<{ query: string; items: PlaceSummary[] }>({ query: "", items: [] });
   const [error, setError] = useState<string | null>(null);
   const [open, setOpen] = useState(false);
 
@@ -54,7 +58,7 @@ export default function SearchBar({ map, registered, onSelect }: Props) {
   }, []);
   useClickOutside(containerRef, close);
 
-  const handleSelect = (result: SearchResult) => {
+  const handleSelect = (result: PlaceSummary) => {
     setOpen(false);
     inputRef.current?.blur();
     onSelect(result);
@@ -64,6 +68,7 @@ export default function SearchBar({ map, registered, onSelect }: Props) {
     setKeyword("");
     setResults({ query: "", items: [] });
     setError(null);
+    onClear();
     inputRef.current?.focus();
   };
 
@@ -75,7 +80,10 @@ export default function SearchBar({ map, registered, onSelect }: Props) {
       <form
         onSubmit={(e) => {
           e.preventDefault();
-          inputRef.current?.blur(); // 휴대폰 키보드 내리기 (목록은 유지)
+          const q = keyword.trim();
+          if (!q) return;
+          close(); // 목록 닫고 휴대폰 키보드 내리기
+          onSubmitSearch(q);
         }}
         className="flex h-13 items-center gap-3 px-4"
       >

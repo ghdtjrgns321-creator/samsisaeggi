@@ -1,38 +1,36 @@
 // Kakao 장소 키워드 검색. 모든 장소(식당·카페·역·건물 등)를 대상으로 한다.
+import type { PlaceBase } from "@/types/place";
 import type { KakaoMap } from "./sdk";
 
-export type KakaoPlace = {
-  id: string;
-  name: string;
-  category: string; // "음식점 > 한식 > 국밥" 중 마지막 단계
-  address: string;
-  lat: number;
-  lng: number;
-};
-
-type RawPlace = {
+/** Kakao 장소 검색 API 응답 한 건 */
+export type RawPlace = {
   id: string;
   place_name: string;
   category_name: string;
+  category_group_code: string;
   road_address_name: string;
   address_name: string;
+  phone: string;
   x: string;
   y: string;
+  distance: string; // 기준 위치를 줬을 때만 값이 있음 (m)
 };
 
-function toKakaoPlace(raw: RawPlace): KakaoPlace {
+export function toPlaceBase(raw: RawPlace): PlaceBase {
   return {
     id: raw.id,
     name: raw.place_name,
-    category: raw.category_name.split(" > ").pop() ?? "",
+    category: raw.category_name.split(" > ").pop() ?? "", // "음식점 > 한식 > 국밥" 중 마지막 단계
     address: raw.road_address_name || raw.address_name,
+    phone: raw.phone,
+    groupCode: raw.category_group_code,
     lat: Number(raw.y),
     lng: Number(raw.x),
   };
 }
 
 /** 현재 지도 중심 근처를 우선해 검색. 결과 없음은 빈 배열, 통신 오류는 throw. */
-export function searchPlaces(keyword: string, map: KakaoMap): Promise<KakaoPlace[]> {
+export function searchPlaces(keyword: string, map: KakaoMap): Promise<PlaceBase[]> {
   const { services } = window.kakao.maps;
   const places = new services.Places();
 
@@ -40,11 +38,36 @@ export function searchPlaces(keyword: string, map: KakaoMap): Promise<KakaoPlace
     places.keywordSearch(
       keyword,
       (data: RawPlace[], status: string) => {
-        if (status === services.Status.OK) resolve(data.map(toKakaoPlace));
+        if (status === services.Status.OK) resolve(data.map(toPlaceBase));
         else if (status === services.Status.ZERO_RESULT) resolve([]);
         else reject(new Error(`Kakao 장소 검색 실패: ${status}`));
       },
       { location: map.getCenter() },
+    );
+  });
+}
+
+const MAX_PAGES = 3; // Kakao 한도: 페이지당 15곳 × 3페이지 = 45곳
+
+/** 지금 지도 화면 안에서만 검색 (엔터 검색 결과를 지도에 띄울 때) */
+export function searchPlacesInView(keyword: string, map: KakaoMap): Promise<PlaceBase[]> {
+  const { services } = window.kakao.maps;
+  const places = new services.Places();
+  const collected: RawPlace[] = [];
+
+  return new Promise((resolve, reject) => {
+    places.keywordSearch(
+      keyword,
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      (data: RawPlace[], status: string, pagination: any) => {
+        if (status === services.Status.ZERO_RESULT) return resolve([]);
+        if (status !== services.Status.OK) return reject(new Error(`Kakao 장소 검색 실패: ${status}`));
+        collected.push(...data);
+        // nextPage()는 같은 콜백을 다시 호출한다
+        if (pagination.hasNextPage && pagination.current < MAX_PAGES) pagination.nextPage();
+        else resolve(collected.map(toPlaceBase));
+      },
+      { bounds: map.getBounds() },
     );
   });
 }

@@ -1,9 +1,9 @@
 // 검색 결과 목록 (화면 표시만). 등록 장소는 "삼시세끼 리뷰 N" 표시.
-import type { SearchResult } from "@/lib/search/rankResults";
+import type { PlaceSummary } from "@/types/place";
 
 type Props = {
-  results: SearchResult[];
-  onSelect: (result: SearchResult) => void;
+  results: PlaceSummary[];
+  onSelect: (result: PlaceSummary) => void;
 };
 
 export default function SearchResultList({ results, onSelect }: Props) {
