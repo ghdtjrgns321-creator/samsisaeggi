@@ -35,7 +35,14 @@ export default function PlaceListItem({ place, rank, myLocation, onSelect }: Pro
             {place.name}
           </p>
           <p className="mt-0.5 truncate text-xs text-gray">
-            <span className="font-bold text-primary">★ {place.rating?.toFixed(1)}</span> 리뷰 {place.reviewCount} · {place.category}
+            {place.rating === null ? (
+              "리뷰 없음"
+            ) : (
+              <>
+                <span className="font-bold text-primary">★ {place.rating.toFixed(1)}</span> 리뷰 {place.reviewCount}
+              </>
+            )}{" "}
+            · {place.category}
             {walk && ` · ${walk}`}
           </p>
           <div className="mt-1.5 flex gap-1 overflow-hidden">

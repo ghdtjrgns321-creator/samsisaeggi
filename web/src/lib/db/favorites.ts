@@ -29,3 +29,18 @@ export async function setFavorite(place: PlaceBase, on: boolean): Promise<void> 
     if (error) throw new Error(`찜을 풀지 못했어요: ${error.message}`);
   }
 }
+
+export type MyFavorite = { placeId: string; favoritedAt: string }; // favoritedAt: ISO
+
+/** 내가 찜한 장소 (최근 찜한 순). 로그인 전이면 빈 목록 */
+export async function fetchMyFavorites(): Promise<MyFavorite[]> {
+  const userId = await currentUserId();
+  if (!userId) return [];
+  const { data, error } = await supabase
+    .from("favorites")
+    .select("place_id, created_at")
+    .eq("user_id", userId)
+    .order("created_at", { ascending: false });
+  if (error) throw new Error(`찜 목록을 불러오지 못했어요: ${error.message}`);
+  return (data as { place_id: string; created_at: string }[]).map((r) => ({ placeId: r.place_id, favoritedAt: r.created_at }));
+}
