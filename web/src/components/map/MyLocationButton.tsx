@@ -1,14 +1,14 @@
 "use client";
 
-// 내 위치 버튼: 현재 위치로 이동하고 파란 점을 표시. 실패하면 이유를 알림(onToast)으로.
+// 내 위치 버튼: 현재 위치로 이동하고 파란 점을 표시, 찾은 위치는 onLocated로 (목록의 도보 시간). 실패하면 알림.
 import { useRef, useState } from "react";
 import type { KakaoMap } from "@/lib/kakao/sdk";
-import { getCurrentPosition } from "@/lib/geolocation";
+import { getCurrentPosition, type LatLng } from "@/lib/geolocation";
 import { myLocationDotElement } from "@/lib/kakao/overlays";
 
-type Props = { map: KakaoMap | null; onToast: (msg: string) => void };
+type Props = { map: KakaoMap | null; onToast: (msg: string) => void; onLocated: (at: LatLng) => void };
 
-export default function MyLocationButton({ map, onToast }: Props) {
+export default function MyLocationButton({ map, onToast, onLocated }: Props) {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const dotRef = useRef<any>(null);
   const [loading, setLoading] = useState(false);
@@ -18,6 +18,7 @@ export default function MyLocationButton({ map, onToast }: Props) {
     setLoading(true);
     try {
       const { lat, lng } = await getCurrentPosition();
+      onLocated({ lat, lng });
       const { maps } = window.kakao;
       const position = new maps.LatLng(lat, lng);
 

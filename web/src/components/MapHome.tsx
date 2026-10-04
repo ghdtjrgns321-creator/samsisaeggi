@@ -1,18 +1,21 @@
 "use client";
 
-// 지도 홈 화면: 지도 + 상단 검색창 + 하단(내 위치 버튼·장소 카드·근처 목록)을 조립하고, 선택 상태를 관리.
+// 지도 홈 화면: 지도 + 상단 검색창 + 하단(내 위치 버튼 · 목록 시트 / 장소 카드 / 근처 목록)을 조립하고, 선택 상태를 관리.
 // 등록 장소는 DB에서 불러온다.
 import { useCallback, useMemo, useRef, useState } from "react";
 import type { Place, PlaceSummary } from "@/types/place";
 import type { KakaoMap as KakaoMapInstance } from "@/lib/kakao/sdk";
 import { DEFAULT_CENTER, fitToPlaces, focusOn, panIntoView } from "@/lib/kakao/mapView";
 import { getLinkedPlaceId } from "@/lib/deepLink";
-import { EMPTY_FILTERS, KIND_GROUP, hasReviewFilter, matchesFilters, type Filters } from "@/lib/filters";
+import { EMPTY_FILTERS, KIND_GROUP, filtersSummary, hasReviewFilter, matchesFilters, type Filters } from "@/lib/filters";
+import type { LatLng } from "@/lib/geolocation";
 import KakaoMap from "./map/KakaoMap";
 import { useAreaSearch } from "./map/useAreaSearch";
 import MyLocationButton from "./map/MyLocationButton";
 import { usePlacePins } from "./map/usePlacePins";
 import { isInBounds, useMapBounds } from "./map/useMapBounds";
+import { useRegionName } from "./map/useRegionName";
+import PlaceListSheet from "./list/PlaceListSheet";
 import { useResultPins } from "./map/useResultPins";
 import { useSearchPin } from "./map/useSearchPin";
 import { useTapToPick } from "./map/useTapToPick";
@@ -37,6 +40,7 @@ export default function MapHome() {
   const [candidates, setCandidates] = useState<PlaceSummary[] | null>(null);
   const [areaKeyword, setAreaKeyword] = useState<string | null>(null); // 엔터 검색어 (null = 검색 안 함)
   const [filters, setFilters] = useState<Filters>(EMPTY_FILTERS);
+  const [myLocation, setMyLocation] = useState<LatLng | null>(null); // 내 위치 버튼으로 찾은 위치 (목록의 도보 시간)
   const [toast, setToast] = useState<string | null>(null);
   const toastTimerRef = useRef<ReturnType<typeof setTimeout>>(undefined);
 
@@ -94,9 +98,12 @@ export default function MapHome() {
   );
   const bounds = useMapBounds(map);
   // 상위 곳이 그대로면 같은 Set을 유지해 핀을 다시 그리지 않는다 (지도를 조금 움직일 때마다 깜빡이지 않게)
-  const namedKey = [
-    ...namedPinIds(bounds ? pinnedPlaces.filter((p) => isInBounds(bounds, p.lat, p.lng)) : pinnedPlaces),
-  ]
+  const placesInView = useMemo(
+    () => (bounds ? pinnedPlaces.filter((p) => isInBounds(bounds, p.lat, p.lng)) : pinnedPlaces),
+    [pinnedPlaces, bounds],
+  );
+  const regionName = useRegionName(bounds);
+  const namedKey = [...namedPinIds(placesInView)]
     .sort()
     .join(",");
   const namedIds = useMemo(() => new Set(namedKey.split(",")), [namedKey]);
@@ -175,7 +182,7 @@ export default function MapHome() {
 
       <div className="pointer-events-none absolute inset-x-0 bottom-0 z-10 flex flex-col items-end gap-3">
         <div className="pointer-events-auto mr-4 mb-3 last:mb-6">
-          <MyLocationButton map={map} onToast={showToast} />
+          <MyLocationButton map={map} onToast={showToast} onLocated={setMyLocation} />
         </div>
         {selected && (
           <div className="pointer-events-auto w-full">
@@ -194,6 +201,19 @@ export default function MapHome() {
         {candidates && (
           <div className="pointer-events-auto w-full">
             <NearbyList places={candidates} onSelect={pickPlace} onClose={() => setCandidates(null)} />
+          </div>
+        )}
+        {/* 아무것도 고르지 않았을 때: 지금 화면 안 리뷰 있는 장소 목록 */}
+        {!selected && !candidates && (
+          <div className="pointer-events-auto w-full">
+            <PlaceListSheet
+              places={placesInView}
+              regionName={regionName}
+              filtersLabel={filtersSummary(filters)}
+              myLocation={myLocation}
+              maxHeight={mainHeight}
+              onSelect={handlePinSelect}
+            />
           </div>
         )}
       </div>

@@ -100,3 +100,10 @@ export function matchesFilters(place: Place, { kind, mealTime, purpose, workEnv 
   );
 }
 
+/** 켜진 태그 이름을 이어 붙인 글자 (목록 제목용, 예: "음식점 · 점심"). 없으면 "" */
+export function filtersSummary(filters: Filters): string {
+  return [KIND_GROUP, ...tagGroupsFor(filters.kind)]
+    .map((g) => g.options.find((o) => o.value === filters[g.key])?.label)
+    .filter(Boolean)
+    .join(" · ");
+}
