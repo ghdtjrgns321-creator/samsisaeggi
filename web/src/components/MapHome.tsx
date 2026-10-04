@@ -31,6 +31,7 @@ import { namedPinIds } from "@/lib/pinRanking";
 
 const TOAST_MS = 2000;
 const NO_PLACES: Place[] = [];
+const BROWSE_PIN_COUNT = 5; // 둘러보기 흰 말풍선 최대 개수
 
 export default function MapHome() {
   const mainRef = useRef<HTMLElement>(null);
@@ -152,11 +153,17 @@ export default function MapHome() {
 
   // 흰 말풍선 = 검색 결과 중 리뷰 없는 곳 (리뷰 있는 곳은 위 등록 핀으로 그림)
   // 리뷰 값 태그(시간대·용도·작업 환경)가 켜지면 리뷰 없는 곳은 조건을 알 수 없으므로 숨긴다
+  // 둘러보기는 지도가 복잡해지지 않게 지금 화면 안 대표 몇 곳만
   // useMemo: 렌더마다 새 배열이 되면 말풍선을 매번 다시 그리게 되므로 고정
-  const visibleResults = useMemo(
-    () => (hasReviewFilter(filters) ? [] : areaResults.filter((p) => !p.reviewCount)),
-    [filters, areaResults],
-  );
+  const resultCandidates = hasReviewFilter(filters) ? [] : areaResults.filter((p) => !p.reviewCount);
+  const shownResults =
+    browse && bounds
+      ? resultCandidates.filter((p) => isInBounds(bounds, p.lat, p.lng)).slice(0, BROWSE_PIN_COUNT)
+      : resultCandidates;
+  // 지도를 조금 움직여도 고른 곳이 그대로면 같은 배열을 유지 (말풍선이 깜빡이지 않게)
+  const shownKey = shownResults.map((p) => p.id).join(",");
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  const visibleResults = useMemo(() => shownResults, [shownKey]);
   useResultPins(map, visibleResults, pinnedPlaces, namedIds, pickPlace);
 
   // 태그: 리뷰 값 태그를 새로 켰는데 맞는 등록 장소가 없으면 바로 알려준다
