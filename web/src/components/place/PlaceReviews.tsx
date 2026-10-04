@@ -1,13 +1,13 @@
 "use client";
 
-// 동료 리뷰 목록 (최신순). 없으면 첫 리뷰 안내.
+// 동료 리뷰 목록 (최신순). 없으면 첫 리뷰 안내. version이 바뀌면(리뷰 저장 뒤) 다시 불러옴
 import { useEffect, useState } from "react";
 import type { Review } from "@/types/review";
 import { fetchReviews } from "@/lib/db/reviews";
 import { usePlaceSheet } from "./PlaceSheetContext";
 import ReviewItem from "./ReviewItem";
 
-export default function PlaceReviews({ onWrite }: { onWrite: () => void }) {
+export default function PlaceReviews({ version, onWrite }: { version: number; onWrite: () => void }) {
   const { place, onToast } = usePlaceSheet();
   const [reviews, setReviews] = useState<Review[] | null>(null); // null = 불러오는 중
 
@@ -18,7 +18,7 @@ export default function PlaceReviews({ onWrite }: { onWrite: () => void }) {
         setReviews([]);
         onToast(e.message);
       });
-  }, [place.id, onToast]);
+  }, [place.id, onToast, version]);
 
   return (
     <section className="border-t-8 border-surface px-5 pt-4 pb-[max(2rem,env(safe-area-inset-bottom))]">

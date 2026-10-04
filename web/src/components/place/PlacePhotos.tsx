@@ -32,7 +32,8 @@ function PhotoTile({ photo, className }: { photo: Photo; className: string }) {
   );
 }
 
-export default function PlacePhotos({ onUpload }: { onUpload: () => void }) {
+// version이 바뀌면(리뷰와 함께 사진 저장 뒤) 다시 불러옴. 올리기 = 리뷰 작성 화면 열기
+export default function PlacePhotos({ version, onUpload }: { version: number; onUpload: () => void }) {
   const { place, onToast } = usePlaceSheet();
   const [photos, setPhotos] = useState<Photo[]>([]);
 
@@ -40,7 +41,7 @@ export default function PlacePhotos({ onUpload }: { onUpload: () => void }) {
     fetchPhotos(place.id)
       .then(setPhotos)
       .catch((e: Error) => onToast(e.message));
-  }, [place.id, onToast]);
+  }, [place.id, onToast, version]);
 
   const [main, ...rest] = photos;
 

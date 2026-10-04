@@ -12,6 +12,7 @@ import KakaoPlaceLink from "./KakaoPlaceLink";
 import PlaceInfo from "./PlaceInfo";
 import PlacePhotos from "./PlacePhotos";
 import PlaceReviews from "./PlaceReviews";
+import ReviewForm from "@/components/review/ReviewForm";
 import { PlaceSheetProvider } from "./PlaceSheetContext";
 
 const HANDLE_HEIGHT = 20; // 손잡이 영역 (pt-2 + 막대 + 여백)
@@ -29,6 +30,8 @@ type Props = {
 export default function PlaceSheet({ place, registered, stats, maxHeight, onToast, onChanged }: Props) {
   const expandable = isReviewable(place);
   const [expanded, setExpanded] = useState(false);
+  const [writing, setWriting] = useState(false); // 리뷰 작성 화면 (리뷰 쓰기·사진 올리기 둘 다 여기로)
+  const [version, setVersion] = useState(0); // 리뷰 저장할 때마다 +1 → 사진·리뷰 다시 불러오기
   const infoRef = useRef<HTMLDivElement>(null);
   const infoHeight = useElementHeight(infoRef);
 
@@ -43,6 +46,14 @@ export default function PlaceSheet({ place, registered, stats, maxHeight, onToas
   const height = Math.min(maxHeight, Math.max(collapsedHeight, baseHeight - dy));
 
   const sheetValue = { place, registered, onToast, onChanged };
+
+  const openWrite = () => setWriting(true);
+  const handleSaved = (message: string) => {
+    setWriting(false);
+    onToast(message);
+    setVersion((v) => v + 1);
+    onChanged();
+  };
 
   if (!expandable) {
     return (
@@ -70,9 +81,10 @@ export default function PlaceSheet({ place, registered, stats, maxHeight, onToas
         <div ref={infoRef}>
           <PlaceInfo stats={stats} />
         </div>
-        <PlacePhotos onUpload={() => onToast("사진 올리기는 준비 중이에요")} />
+        <PlacePhotos version={version} onUpload={openWrite} />
         <KakaoPlaceLink place={place} />
-        <PlaceReviews onWrite={() => onToast("리뷰 쓰기는 준비 중이에요")} />
+        <PlaceReviews version={version} onWrite={openWrite} />
+        {writing && <ReviewForm place={place} onClose={() => setWriting(false)} onSaved={handleSaved} />}
 
         {/* 접힌 상태: 살짝 보이는 사진 칸을 끌거나 누르면 펼침 */}
         {!expanded && (
