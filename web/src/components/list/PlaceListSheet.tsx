@@ -13,7 +13,7 @@ import { useVerticalDrag } from "@/hooks/useVerticalDrag";
 import FavoritesTab from "./FavoritesTab";
 import PlaceListItem from "./PlaceListItem";
 
-const COLLAPSED_HEIGHT = 210; // 손잡이 + 제목 + 목록 1.5줄
+export const LIST_COLLAPSED_HEIGHT = 210; // 손잡이 + 제목 + 목록 1.5줄 (지도 홈이 가려진 부분을 뺄 때도 씀)
 const TOP_GAP = 72; // 펼쳤을 때 위에 남길 공간 (검색창)
 
 type Tab = "ranking" | "favorites";
@@ -82,9 +82,9 @@ export default function PlaceListSheet({
   }, [onError]);
   useEffect(loadFavorites, [loadFavorites]);
 
-  const expandedHeight = Math.max(COLLAPSED_HEIGHT, maxHeight - TOP_GAP);
-  const base = expanded ? expandedHeight : COLLAPSED_HEIGHT;
-  const height = Math.min(expandedHeight, Math.max(COLLAPSED_HEIGHT, base - dy));
+  const expandedHeight = Math.max(LIST_COLLAPSED_HEIGHT, maxHeight - TOP_GAP);
+  const base = expanded ? expandedHeight : LIST_COLLAPSED_HEIGHT;
+  const height = Math.min(expandedHeight, Math.max(LIST_COLLAPSED_HEIGHT, base - dy));
 
   const favoriteCount = favorites.filter((f) => allPlaces.some((p) => p.id === f.placeId)).length;
   const showFavorites = expanded && tab === "favorites";

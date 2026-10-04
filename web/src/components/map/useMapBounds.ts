@@ -29,3 +29,9 @@ export function useMapBounds(map: KakaoMap | null): Bounds | null {
 export function isInBounds(b: Bounds, lat: number, lng: number): boolean {
   return lat >= b.south && lat <= b.north && lng >= b.west && lng <= b.east;
 }
+
+/** 아래쪽 insetPx만큼(목록 시트에 가려진 부분)을 뺀 범위. 화면 높이를 모르면 그대로 */
+export function trimBottom(b: Bounds, insetPx: number, heightPx: number): Bounds {
+  if (heightPx <= insetPx) return b;
+  return { ...b, south: b.south + ((b.north - b.south) * insetPx) / heightPx };
+}

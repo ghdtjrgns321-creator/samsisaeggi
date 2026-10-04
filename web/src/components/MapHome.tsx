@@ -13,9 +13,9 @@ import KakaoMap from "./map/KakaoMap";
 import { useAreaSearch } from "./map/useAreaSearch";
 import MyLocationButton from "./map/MyLocationButton";
 import { usePlacePins } from "./map/usePlacePins";
-import { isInBounds, useMapBounds } from "./map/useMapBounds";
+import { isInBounds, trimBottom, useMapBounds } from "./map/useMapBounds";
 import { useRegionName } from "./map/useRegionName";
-import PlaceListSheet from "./list/PlaceListSheet";
+import PlaceListSheet, { LIST_COLLAPSED_HEIGHT } from "./list/PlaceListSheet";
 import { useResultPins } from "./map/useResultPins";
 import { useSearchPin } from "./map/useSearchPin";
 import { useTapToPick } from "./map/useTapToPick";
@@ -31,6 +31,7 @@ import { namedPinIds } from "@/lib/pinRanking";
 
 const TOAST_MS = 2000;
 const NO_PLACES: Place[] = [];
+const BROWSE_PIN_COUNT = 5; // 둘러보기 흰 말풍선 최대 개수
 
 export default function MapHome() {
   const mainRef = useRef<HTMLElement>(null);
@@ -93,7 +94,12 @@ export default function MapHome() {
     if (map) panIntoView(map, place.lat, place.lng);
   };
 
-  const bounds = useMapBounds(map);
+  // 목록 시트(접힌 상태)에 가려진 아래쪽은 빼고 실제로 보이는 지도 범위로 목록·동 이름·둘러보기를 정한다
+  const mapBounds = useMapBounds(map);
+  const bounds = useMemo(
+    () => (mapBounds ? trimBottom(mapBounds, LIST_COLLAPSED_HEIGHT, mainHeight) : null),
+    [mapBounds, mainHeight],
+  );
   // 둘러보기: 검색어 없이도 화면 안에 리뷰 있는 곳이 하나도 없으면(처음 보는 동네) 리뷰 없는 음식점·카페를 보여준다
   const browse =
     loaded !== null &&
@@ -119,19 +125,20 @@ export default function MapHome() {
     () => (bounds ? pinnedPlaces.filter((p) => isInBounds(bounds, p.lat, p.lng)) : pinnedPlaces),
     [pinnedPlaces, bounds],
   );
-  const regionName = useRegionName(bounds);
+  const regionName = useRegionName(map, bounds);
   const namedKey = [...namedPinIds(placesInView)]
     .sort()
     .join(",");
   const namedIds = useMemo(() => new Set(namedKey.split(",")), [namedKey]);
-  usePlacePins(map, pinnedPlaces, namedIds, handlePinSelect);
   const showTempPin = useSearchPin(map, handlePinSelect);
 
-  // 임시 핀이 필요한 선택(지도에서 누른 장소·근처 목록) → 임시 핀 + 카드
+  // 지도에서 장소를 고름(핀·말풍선·지도 위 장소·근처 목록) → 카드 + 임시 핀을 그 장소로 옮김
+  // (리뷰 있는 등록 장소면 임시 핀은 지워진다 — 이미 핀이 있음)
   const pickPlace = (place: PlaceSummary) => {
     showTempPin(place);
     handlePinSelect(place);
   };
+  usePlacePins(map, pinnedPlaces, namedIds, pickPlace);
 
   // 여러 장소 목록 → 카드·임시 핀은 닫고 목록만
   const showCandidates = (list: PlaceSummary[]) => {
@@ -151,12 +158,18 @@ export default function MapHome() {
 
   // 흰 말풍선 = 검색 결과 중 리뷰 없는 곳 (리뷰 있는 곳은 위 등록 핀으로 그림)
   // 리뷰 값 태그(시간대·용도·작업 환경)가 켜지면 리뷰 없는 곳은 조건을 알 수 없으므로 숨긴다
+  // 둘러보기는 지도가 복잡해지지 않게 지금 화면 안 대표 몇 곳만
   // useMemo: 렌더마다 새 배열이 되면 말풍선을 매번 다시 그리게 되므로 고정
-  const visibleResults = useMemo(
-    () => (hasReviewFilter(filters) ? [] : areaResults.filter((p) => !p.reviewCount)),
-    [filters, areaResults],
-  );
-  useResultPins(map, visibleResults, pinnedPlaces, namedIds, handlePinSelect);
+  const resultCandidates = hasReviewFilter(filters) ? [] : areaResults.filter((p) => !p.reviewCount);
+  const shownResults =
+    browse && bounds
+      ? resultCandidates.filter((p) => isInBounds(bounds, p.lat, p.lng)).slice(0, BROWSE_PIN_COUNT)
+      : resultCandidates;
+  // 지도를 조금 움직여도 고른 곳이 그대로면 같은 배열을 유지 (말풍선이 깜빡이지 않게)
+  const shownKey = shownResults.map((p) => p.id).join(",");
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  const visibleResults = useMemo(() => shownResults, [shownKey]);
+  useResultPins(map, visibleResults, pinnedPlaces, namedIds, pickPlace);
 
   // 태그: 리뷰 값 태그를 새로 켰는데 맞는 등록 장소가 없으면 바로 알려준다
   const handleFiltersChange = (next: Filters) => {
