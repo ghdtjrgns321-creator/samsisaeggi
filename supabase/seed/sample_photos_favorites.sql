@@ -1,0 +1,53 @@
+-- 예시 사진 30장 + 예시 찜 수 (scripts/seed_sample_extras.py 로 생성, 직접 고치지 말 것)
+-- 0002 마이그레이션과 sample_reviews.sql 다음에 실행. 지우기: 맨 아래 주석.
+
+insert into public.photos (place_id, user_id, path, is_sample, credit, created_at) values
+  ('775002048', null, 'https://thumb.wikimedia.org/wikipedia/commons/thumb/e/e1/Korean.cuisine-Samgyeopsal-01.jpg/960px-Korean.cuisine-Samgyeopsal-01.jpg', true, 'by hellochris · CC BY 2.0', '2026-08-05T12:00:00+00:00'),
+  ('775002048', null, 'https://thumb.wikimedia.org/wikipedia/commons/thumb/4/47/Korean.cuisine-Samgyeopsal-09.jpg/960px-Korean.cuisine-Samgyeopsal-09.jpg', true, 'by hellochris · CC BY-SA 2.0', '2026-08-06T12:00:00+00:00'),
+  ('775002048', null, 'https://thumb.wikimedia.org/wikipedia/commons/thumb/6/67/Korean_barbecue-Samgyeopsal-08.jpg/960px-Korean_barbecue-Samgyeopsal-08.jpg', true, 'Wikimedia Commons · CC BY-SA 3.0', '2026-08-07T12:00:00+00:00'),
+  ('775002048', null, 'https://thumb.wikimedia.org/wikipedia/commons/thumb/9/99/Korean_barbeque-Samgyeopsal-06.jpg/960px-Korean_barbeque-Samgyeopsal-06.jpg', true, 'by jetalone (flickr) · CC BY-SA 2.0', '2026-08-08T12:00:00+00:00'),
+  ('19530747', null, 'https://upload.wikimedia.org/wikipedia/commons/3/37/Gopchang_2.jpg', true, '뚱표아빠의 세상사는 이야기 · CC BY 4.0', '2026-08-05T12:00:00+00:00'),
+  ('19530747', null, 'https://upload.wikimedia.org/wikipedia/commons/f/f3/Gopchang_3.jpg', true, '뚱표아빠의 세상사는 이야기 · CC BY 4.0', '2026-08-06T12:00:00+00:00'),
+  ('939156377', null, 'https://thumb.wikimedia.org/wikipedia/commons/thumb/3/37/Bajirak-kalguksu_20230126_002.jpg/960px-Bajirak-kalguksu_20230126_002.jpg', true, 'Mobius6 · CC BY-SA 4.0', '2026-08-05T12:00:00+00:00'),
+  ('939156377', null, 'https://thumb.wikimedia.org/wikipedia/commons/thumb/3/30/Bajirak-kalguksu_20230126_001.jpg/960px-Bajirak-kalguksu_20230126_001.jpg', true, 'Mobius6 · CC BY-SA 4.0', '2026-08-06T12:00:00+00:00'),
+  ('939156377', null, 'https://thumb.wikimedia.org/wikipedia/commons/thumb/e/e3/Bajirak-kal-guksu_1.jpg/960px-Bajirak-kal-guksu_1.jpg', true, 'chomjong · CC BY 2.0', '2026-08-07T12:00:00+00:00'),
+  ('27418261', null, 'https://thumb.wikimedia.org/wikipedia/commons/thumb/4/4d/Kongnamul-gukbap.jpg/960px-Kongnamul-gukbap.jpg', true, 'Lee Eunyoung · CC0', '2026-08-05T12:00:00+00:00'),
+  ('27418261', null, 'https://thumb.wikimedia.org/wikipedia/commons/thumb/2/2d/Kongnamul_gukbap_20230408_001.jpg/960px-Kongnamul_gukbap_20230408_001.jpg', true, 'Mobius6 · CC BY-SA 4.0', '2026-08-06T12:00:00+00:00'),
+  ('27418261', null, 'https://thumb.wikimedia.org/wikipedia/commons/thumb/2/27/Kongnamul_gukbap_20230408_003.jpg/960px-Kongnamul_gukbap_20230408_003.jpg', true, 'Mobius6 · CC BY-SA 4.0', '2026-08-07T12:00:00+00:00'),
+  ('26354443', null, 'https://upload.wikimedia.org/wikipedia/commons/f/f4/Han-jeongsik.jpg', true, 'TheDream 더 드림 더드림 · CC BY-SA 2.5', '2026-08-05T12:00:00+00:00'),
+  ('26354443', null, 'https://thumb.wikimedia.org/wikipedia/commons/thumb/9/99/20150214-20150219%EC%B5%9C%EA%B4%91%EB%AA%A8C59.JPG/960px-20150214-20150219%EC%B5%9C%EA%B4%91%EB%AA%A8C59.JPG', true, '최광모 · CC BY-SA 4.0', '2026-08-06T12:00:00+00:00'),
+  ('1552525580', null, 'https://thumb.wikimedia.org/wikipedia/commons/thumb/6/60/Nigiri_Sushi%2C_Hosomaki_-_Uta_Sushi_Bar_%285049056668%29.jpg/960px-Nigiri_Sushi%2C_Hosomaki_-_Uta_Sushi_Bar_%285049056668%29.jpg', true, 'Alpha from Melbourne, Australia · CC BY-SA 2.0', '2026-08-05T12:00:00+00:00'),
+  ('1552525580', null, 'https://thumb.wikimedia.org/wikipedia/commons/thumb/c/c5/Nigiri_Sushi_%2825966163204%29.jpg/960px-Nigiri_Sushi_%2825966163204%29.jpg', true, 'Tim Reckmann from Hamm, Deutschland · CC BY 2.0', '2026-08-06T12:00:00+00:00'),
+  ('1552525580', null, 'https://thumb.wikimedia.org/wikipedia/commons/thumb/a/a1/Nigiri_Sushi_%2826478732232%29.jpg/960px-Nigiri_Sushi_%2826478732232%29.jpg', true, 'Tim Reckmann from Hamm, Deutschland · CC BY 2.0', '2026-08-07T12:00:00+00:00'),
+  ('901622079', null, 'https://thumb.wikimedia.org/wikipedia/commons/thumb/2/25/63%E5%BA%A6%E6%85%A2%E7%85%AE%E6%BA%AB%E6%B3%89%E8%9B%8B%E5%8D%A1%E9%82%A6%E5%B0%BC%E6%84%8F%E5%A4%A7%E5%88%A9%E7%B2%89.jpg/960px-63%E5%BA%A6%E6%85%A2%E7%85%AE%E6%BA%AB%E6%B3%89%E8%9B%8B%E5%8D%A1%E9%82%A6%E5%B0%BC%E6%84%8F%E5%A4%A7%E5%88%A9%E7%B2%89.jpg', true, 'Andy Li · CC0', '2026-08-05T12:00:00+00:00'),
+  ('901622079', null, 'https://thumb.wikimedia.org/wikipedia/commons/thumb/e/e8/Carbonara_-_Amo_2026-05-18.jpg/960px-Carbonara_-_Amo_2026-05-18.jpg', true, 'Andy Li · CC0', '2026-08-06T12:00:00+00:00'),
+  ('805520380', null, 'https://thumb.wikimedia.org/wikipedia/commons/thumb/5/57/Miso_tonkatsu_at_Toyota_Automobile_Museum_cafe_2022.jpg/960px-Miso_tonkatsu_at_Toyota_Automobile_Museum_cafe_2022.jpg', true, 'Masahiko OHKUBO · CC BY 2.0', '2026-08-05T12:00:00+00:00'),
+  ('805520380', null, 'https://thumb.wikimedia.org/wikipedia/commons/thumb/7/79/Pork_Katsu_Set_-_Korpan.jpg/960px-Pork_Katsu_Set_-_Korpan.jpg', true, 'Andy Li · CC0', '2026-08-06T12:00:00+00:00'),
+  ('19697175', null, 'https://thumb.wikimedia.org/wikipedia/commons/thumb/a/ad/Garaetteok_Tteokbokki.jpg/960px-Garaetteok_Tteokbokki.jpg', true, 'Kimseoeun2023079825 · CC0', '2026-08-05T12:00:00+00:00'),
+  ('1963622308', null, 'https://thumb.wikimedia.org/wikipedia/commons/thumb/1/19/A_portion_of_Korean_Shabu-Shabu.jpg/960px-A_portion_of_Korean_Shabu-Shabu.jpg', true, 'Teacher83 · CC BY-SA 3.0', '2026-08-05T12:00:00+00:00'),
+  ('1963622308', null, 'https://thumb.wikimedia.org/wikipedia/commons/thumb/d/d8/Koisurubuta_shabu-shabu.jpg/960px-Koisurubuta_shabu-shabu.jpg', true, 'アリオト · CC BY-SA 4.0', '2026-08-06T12:00:00+00:00'),
+  ('27342687', null, 'https://thumb.wikimedia.org/wikipedia/commons/thumb/a/a4/Freshippo_croissant_bread.jpg/960px-Freshippo_croissant_bread.jpg', true, 'Fumikas Sagisavas · CC0', '2026-08-05T12:00:00+00:00'),
+  ('1840452915', null, 'https://thumb.wikimedia.org/wikipedia/commons/thumb/f/f4/Brunch_-_The_Wicked_Spoon.jpg/960px-Brunch_-_The_Wicked_Spoon.jpg', true, 'Studio Sarah Lou · CC BY 2.0', '2026-08-05T12:00:00+00:00'),
+  ('1840452915', null, 'https://thumb.wikimedia.org/wikipedia/commons/thumb/f/f3/Eggs_Benedict_%28Unsplash%29.jpg/960px-Eggs_Benedict_%28Unsplash%29.jpg', true, 'Constance Chen theskyandthesea · CC0', '2026-08-06T12:00:00+00:00'),
+  ('604749104', null, 'https://thumb.wikimedia.org/wikipedia/commons/thumb/d/d6/Cappuccino_with_latte_art_on_Coffee_Right_in_Brno%2C_Brno-City_District.jpg/960px-Cappuccino_with_latte_art_on_Coffee_Right_in_Brno%2C_Brno-City_District.jpg', true, 'Frettie · CC BY 3.0', '2026-08-05T12:00:00+00:00'),
+  ('604749104', null, 'https://thumb.wikimedia.org/wikipedia/commons/thumb/0/06/Latte_art.jpg/960px-Latte_art.jpg', true, 'Mortefot from Flickr · CC BY-SA 2.0', '2026-08-06T12:00:00+00:00'),
+  ('604749104', null, 'https://upload.wikimedia.org/wikipedia/commons/8/8a/Latte_art_.jpg', true, 'BeccaMatthews · CC BY-SA 4.0', '2026-08-07T12:00:00+00:00');
+
+update public.places set sample_favorite_count = 29 where id = '775002048';
+update public.places set sample_favorite_count = 25 where id = '939156377';
+update public.places set sample_favorite_count = 20 where id = '27418261';
+update public.places set sample_favorite_count = 21 where id = '604749104';
+update public.places set sample_favorite_count = 13 where id = '26354443';
+update public.places set sample_favorite_count = 9 where id = '1552525580';
+update public.places set sample_favorite_count = 13 where id = '901622079';
+update public.places set sample_favorite_count = 13 where id = '805520380';
+update public.places set sample_favorite_count = 6 where id = '814689985';
+update public.places set sample_favorite_count = 3 where id = '19697175';
+update public.places set sample_favorite_count = 6 where id = '1963622308';
+update public.places set sample_favorite_count = 8 where id = '27342687';
+update public.places set sample_favorite_count = 8 where id = '1840452915';
+update public.places set sample_favorite_count = 7 where id = '19530747';
+
+-- 지우기:
+-- delete from public.photos where is_sample;
+-- update public.places set sample_favorite_count = 0;

@@ -1,0 +1,85 @@
+"""예시 사진·예시 찜 수 SQL 생성기 (seed_sample_reviews.py 다음에 실행할 SQL을 만든다).
+
+- 사진: scripts/data/sample_photos.json (Wikimedia Commons의 자유 이용 사진: CC0·CC BY·CC BY-SA)
+  실제 그 가게 사진이 아니라 비슷한 음식 사진이므로 is_sample = true, 출처(credit) 함께 저장
+- 찜 수: places.sample_favorite_count 에 숫자만 넣는다 (리뷰가 많을수록 많게)
+- 0002 마이그레이션 실행 후 SQL Editor 에서 실행
+
+실행: uv run scripts/seed_sample_extras.py
+"""
+
+import json
+import random
+from datetime import timedelta
+
+from seed_sample_reviews import (
+    EXCLUDE_NAMES,
+    EXISTING,
+    NOW,
+    PLACES_JSON,
+    PLAN,
+    ROOT,
+    sql_str,
+)
+
+PHOTOS_JSON = ROOT / "scripts/data/sample_photos.json"
+OUT_SQL = ROOT / "supabase/seed/sample_photos_favorites.sql"
+FAVORITES_PER_REVIEW = 3  # 예시 찜 수 ≈ 리뷰 수 × 3 + 약간의 흔들림
+
+
+def main() -> None:
+    rng = random.Random(20261005)
+    collected = [
+        p
+        for p in json.loads(PLACES_JSON.read_text(encoding="utf-8"))
+        if not any(x in p["name"] for x in EXCLUDE_NAMES)
+    ]
+
+    def find_id(key: str) -> str:
+        if key in EXISTING:
+            return EXISTING[key]
+        return next(p["id"] for p in collected if key in p["name"])
+
+    photos = json.loads(PHOTOS_JSON.read_text(encoding="utf-8"))
+    photo_rows = []
+    for key, items in photos.items():
+        place_id = find_id(key)
+        for i, photo in enumerate(items):
+            artist = photo["artist"] if photo["artist"] not in ("", "me") else "Wikimedia Commons"  # 'me' = 올린 사람이 이름 대신 적은 값
+            credit = f"{artist} · {photo['license']}"
+            created_at = NOW - timedelta(
+                days=60 - i
+            )  # 목록 첫 사진이 대표 사진이 되도록 오래된 순서
+            photo_rows.append(
+                f"  ({sql_str(place_id)}, null, {sql_str(photo['url'].split('?')[0])}, true, {sql_str(credit)}, {sql_str(created_at.isoformat())})"
+            )
+
+    favorite_rows = [
+        f"update public.places set sample_favorite_count = {count * FAVORITES_PER_REVIEW + rng.randint(0, 5)} where id = {sql_str(find_id(key))};"
+        for key, _, count, _ in PLAN
+        if count > 0
+    ]
+
+    OUT_SQL.write_text(
+        f"""-- 예시 사진 {len(photo_rows)}장 + 예시 찜 수 (scripts/seed_sample_extras.py 로 생성, 직접 고치지 말 것)
+-- 0002 마이그레이션과 sample_reviews.sql 다음에 실행. 지우기: 맨 아래 주석.
+
+insert into public.photos (place_id, user_id, path, is_sample, credit, created_at) values
+{",\n".join(photo_rows)};
+
+{chr(10).join(favorite_rows)}
+
+-- 지우기:
+-- delete from public.photos where is_sample;
+-- update public.places set sample_favorite_count = 0;
+""",
+        encoding="utf-8",
+        newline="\n",
+    )
+    print(
+        f"{OUT_SQL.relative_to(ROOT)}: 사진 {len(photo_rows)}장, 찜 수 {len(favorite_rows)}곳"
+    )
+
+
+if __name__ == "__main__":
+    main()
