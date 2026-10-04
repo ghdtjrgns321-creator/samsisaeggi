@@ -70,7 +70,7 @@ export default function PlaceSheet({ place, registered, stats, maxHeight, onToas
         <div ref={infoRef}>
           <PlaceInfo stats={stats} />
         </div>
-        <PlacePhotos photoUrls={[]} onUpload={() => onToast("사진 올리기는 준비 중이에요")} />
+        <PlacePhotos onUpload={() => onToast("사진 올리기는 준비 중이에요")} />
         <KakaoPlaceLink place={place} />
         <PlaceReviews onWrite={() => onToast("리뷰 쓰기는 준비 중이에요")} />
 

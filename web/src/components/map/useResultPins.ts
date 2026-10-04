@@ -13,6 +13,7 @@ export function useResultPins(
   map: KakaoMap | null,
   results: PlaceSummary[],
   registered: Place[],
+  namedIds: Set<string>,
   onSelect: (place: PlaceSummary) => void,
 ) {
   const onSelectRef = useRef(onSelect);
@@ -44,7 +45,7 @@ export function useResultPins(
         const pt = projection.containerPointFromCoords(new maps.LatLng(lat, lng));
         return labelBox(text, pt.x, pt.y);
       };
-      const fixed = registered.map((p) => toBox(placePinLabel(p), p.lat, p.lng));
+      const fixed = registered.map((p) => toBox(placePinLabel(p, namedIds.has(p.id)), p.lat, p.lng));
       const visible = pickVisible(
         pins.map(({ place }) => toBox(place.name, place.lat, place.lng)),
         fixed,
@@ -60,5 +61,5 @@ export function useResultPins(
       maps.event.removeListener(map, "idle", layout);
       pins.forEach(({ overlay }) => overlay.setMap(null));
     };
-  }, [map, results, registered]);
+  }, [map, results, registered, namedIds]);
 }

@@ -38,7 +38,7 @@ export function useAreaSearch(
   useEffect(() => {
     if (!map || !active) return;
     const { maps } = window.kakao;
-    const registeredIds = new Set(registered.map((p) => p.id));
+    const pinnedIds = new Set(registered.filter((p) => p.reviewCount > 0).map((p) => p.id)); // 이미 핀이 있는 곳
     let cancelled = false;
     let requestId = 0;
     let isFirst = true;
@@ -56,7 +56,7 @@ export function useAreaSearch(
         if (isFirst && results.length === 0) onEmptyRef.current();
         isFirst = false;
 
-        const fresh = results.filter((p) => !registeredIds.has(p.id)).map((p) => withReviewCount(p, registered));
+        const fresh = results.filter((p) => !pinnedIds.has(p.id)).map((p) => withReviewCount(p, registered));
         setFound((prev) => {
           const base = prev.key === key ? prev.items : [];
           const seen = new Set(base.map((p) => p.id));

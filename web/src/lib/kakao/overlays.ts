@@ -13,14 +13,15 @@ function pin(className: string, label: string): HTMLElement {
   return el;
 }
 
-/** 등록 장소 말풍선 글자: 별점이 있으면 "★ 4.5 이름" */
-export function placePinLabel(place: Place): string {
-  return place.rating === null ? place.name : `★ ${place.rating.toFixed(1)} ${place.name}`;
+/** 등록 장소 말풍선 글자: withName이면 "★ 4.5 이름", 아니면 "★ 4.5" */
+export function placePinLabel(place: Place, withName: boolean): string {
+  const star = place.rating === null ? "" : `★ ${place.rating.toFixed(1)}`;
+  return withName ? `${star} ${place.name}`.trim() : star;
 }
 
 /** 삼시세끼 등록 장소 핀 (식당 검정 / 카페 갈색) */
-export function placePinElement(place: Place): HTMLElement {
-  return pin(place.groupCode === "CE7" ? "pin-cafe" : "pin-restaurant", placePinLabel(place));
+export function placePinElement(place: Place, withName: boolean): HTMLElement {
+  return pin(place.groupCode === "CE7" ? "pin-cafe" : "pin-restaurant", placePinLabel(place, withName));
 }
 
 /** 검색으로 고른 미등록 장소 임시 핀 */

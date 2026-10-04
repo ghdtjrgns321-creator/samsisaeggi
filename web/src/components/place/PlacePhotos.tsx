@@ -1,12 +1,10 @@
 "use client";
 
 // 동료가 올린 사진. 첫 장이 대표 사진(크게), 나머지는 3칸 격자. 없으면 첫 사진 남기기 안내.
-// (사진 올리기·저장은 DB 연결 단계에서)
-
-type Props = {
-  photoUrls: string[];
-  onUpload: () => void;
-};
+// 예시 사진은 "예시 사진" 표시 + 출처(작성자·라이선스)를 사진 위에 작게 붙인다.
+import { useEffect, useState } from "react";
+import { fetchPhotos, type Photo } from "@/lib/db/photos";
+import { usePlaceSheet } from "./PlaceSheetContext";
 
 function CameraIcon() {
   return (
@@ -17,25 +15,60 @@ function CameraIcon() {
   );
 }
 
-export default function PlacePhotos({ photoUrls, onUpload }: Props) {
-  const [main, ...rest] = photoUrls;
+function PhotoTile({ photo, className }: { photo: Photo; className: string }) {
+  return (
+    <div className={`relative overflow-hidden ${className}`}>
+      {/* eslint-disable-next-line @next/next/no-img-element -- 외부 저장소·자유 이용 사진 URL */}
+      <img src={photo.url} alt="" loading="lazy" className="h-full w-full object-cover" />
+      {photo.isSample && (
+        <span className="absolute top-1.5 left-1.5 rounded bg-black/55 px-1.5 py-0.5 text-[10px] text-white">예시 사진</span>
+      )}
+      {photo.credit && (
+        <span className="absolute inset-x-0 bottom-0 truncate bg-gradient-to-t from-black/60 to-transparent px-1.5 pt-3 pb-1 text-[9px] text-white/90">
+          {photo.credit}
+        </span>
+      )}
+    </div>
+  );
+}
+
+export default function PlacePhotos({ onUpload }: { onUpload: () => void }) {
+  const { place, onToast } = usePlaceSheet();
+  const [photos, setPhotos] = useState<Photo[]>([]);
+
+  useEffect(() => {
+    fetchPhotos(place.id)
+      .then(setPhotos)
+      .catch((e: Error) => onToast(e.message));
+  }, [place.id, onToast]);
+
+  const [main, ...rest] = photos;
 
   return (
     <section className="border-t-8 border-surface px-5 pt-4 pb-5">
-      <h3 className="mb-3 text-base font-bold">사진</h3>
+      <div className="mb-3 flex items-center justify-between">
+        <h3 className="text-base font-bold">
+          사진 {photos.length > 0 && <span className="text-primary">{photos.length}</span>}
+        </h3>
+        {main && (
+          <button type="button" onClick={onUpload} className="text-sm font-bold text-primary">
+            + 올리기
+          </button>
+        )}
+      </div>
       {main ? (
         <div className="space-y-1">
-          {/* eslint-disable-next-line @next/next/no-img-element -- 사용자 업로드 사진(외부 저장소 URL) */}
-          <img src={main} alt="대표 사진" className="aspect-[4/3] w-full rounded-xl object-cover" />
-          <div className="grid grid-cols-3 gap-1">
-            {rest.map((url) => (
-              // eslint-disable-next-line @next/next/no-img-element
-              <img key={url} src={url} alt="" className="aspect-square w-full rounded-lg object-cover" />
-            ))}
-          </div>
+          <PhotoTile photo={main} className="aspect-[4/3] w-full rounded-xl" />
+          {rest.length > 0 && (
+            <div className="grid grid-cols-3 gap-1">
+              {rest.map((p) => (
+                <PhotoTile key={p.id} photo={p} className="aspect-square w-full rounded-lg" />
+              ))}
+            </div>
+          )}
         </div>
       ) : (
-        // 접힌 시트에서 통째로 보이도록 낮은 가로형 + 주황 톤으로 눈에 띄게
+        // 접힌 시트에서 위쪽 절반만 보이도록 낮은 가로형 + 주황 톤으로 눈에 띄게
         <button
           type="button"
           onClick={onUpload}
