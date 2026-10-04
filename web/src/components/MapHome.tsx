@@ -13,9 +13,9 @@ import KakaoMap from "./map/KakaoMap";
 import { useAreaSearch } from "./map/useAreaSearch";
 import MyLocationButton from "./map/MyLocationButton";
 import { usePlacePins } from "./map/usePlacePins";
-import { isInBounds, useMapBounds } from "./map/useMapBounds";
+import { isInBounds, trimBottom, useMapBounds } from "./map/useMapBounds";
 import { useRegionName } from "./map/useRegionName";
-import PlaceListSheet from "./list/PlaceListSheet";
+import PlaceListSheet, { LIST_COLLAPSED_HEIGHT } from "./list/PlaceListSheet";
 import { useResultPins } from "./map/useResultPins";
 import { useSearchPin } from "./map/useSearchPin";
 import { useTapToPick } from "./map/useTapToPick";
@@ -94,7 +94,12 @@ export default function MapHome() {
     if (map) panIntoView(map, place.lat, place.lng);
   };
 
-  const bounds = useMapBounds(map);
+  // 목록 시트(접힌 상태)에 가려진 아래쪽은 빼고 실제로 보이는 지도 범위로 목록·동 이름·둘러보기를 정한다
+  const mapBounds = useMapBounds(map);
+  const bounds = useMemo(
+    () => (mapBounds ? trimBottom(mapBounds, LIST_COLLAPSED_HEIGHT, mainHeight) : null),
+    [mapBounds, mainHeight],
+  );
   // 둘러보기: 검색어 없이도 화면 안에 리뷰 있는 곳이 하나도 없으면(처음 보는 동네) 리뷰 없는 음식점·카페를 보여준다
   const browse =
     loaded !== null &&
@@ -120,7 +125,7 @@ export default function MapHome() {
     () => (bounds ? pinnedPlaces.filter((p) => isInBounds(bounds, p.lat, p.lng)) : pinnedPlaces),
     [pinnedPlaces, bounds],
   );
-  const regionName = useRegionName(bounds);
+  const regionName = useRegionName(map, bounds);
   const namedKey = [...namedPinIds(placesInView)]
     .sort()
     .join(",");
