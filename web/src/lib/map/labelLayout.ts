@@ -32,13 +32,13 @@ function overlaps(a: Box, b: Box): boolean {
 
 /**
  * candidates는 우선순위 순서. fixed는 항상 보이는 말풍선(자리만 차지).
- * 보여줄 candidates의 index 집합을 돌려준다.
+ * 보여줄 candidates의 index 집합을 돌려준다 (최대 max개, null 후보는 건너뜀).
  */
-export function pickVisible(candidates: Box[], fixed: Box[]): Set<number> {
+export function pickVisible(candidates: (Box | null)[], fixed: Box[], max = Infinity): Set<number> {
   const placed = [...fixed];
   const visible = new Set<number>();
   candidates.forEach((box, i) => {
-    if (placed.some((p) => overlaps(p, box))) return;
+    if (!box || visible.size >= max || placed.some((p) => overlaps(p, box))) return;
     placed.push(box);
     visible.add(i);
   });

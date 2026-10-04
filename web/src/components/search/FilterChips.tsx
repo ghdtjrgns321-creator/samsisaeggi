@@ -6,6 +6,7 @@ import { KIND_GROUP, tagGroupsFor, withKind, type FilterGroup, type FilterKey, t
 type Open = { key: FilterKey; left: number };
 
 const PANEL_WIDTH = 132;
+export const MAP_TOP_COVER_PX = 112; // 검색창 + 필터 칩이 가리는 지도 위쪽 높이 (칩 top-[72px] + 칩 줄 높이)
 
 function GroupChip({ group, value, open, onClick }: { group: FilterGroup; value: string | null; open: boolean; onClick: (e: MouseEvent<HTMLButtonElement>) => void }) {
   const picked = group.options.find((o) => o.value === value);
