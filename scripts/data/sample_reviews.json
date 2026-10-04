@@ -1,0 +1,82 @@
+{
+  "당산오돌": [
+    { "rating": 5, "comment": "오돌뼈에 주먹밥 조합 최고, 회식 2차로 딱", "purposes": ["팀"], "meal_time": "회식", "people": 10, "total_price": 320000 },
+    { "rating": 5, "comment": "안쪽 룸에 12명 다 들어갔어요. 예약 필수", "purposes": ["팀"], "meal_time": "회식", "people": 12, "total_price": 410000 },
+    { "rating": 4, "comment": "목살 두툼하고 직원분이 다 구워주심", "purposes": ["동기"], "meal_time": "저녁", "people": 4, "total_price": 128000 },
+    { "rating": 4, "comment": "고기 맛은 확실한데 옷에 냄새 많이 배요", "purposes": ["팀"], "meal_time": "회식", "people": 8 },
+    { "rating": 3, "comment": "금요일 저녁엔 시끄러워서 대화가 힘들어요", "purposes": ["동기"], "meal_time": "저녁", "people": 5, "total_price": 165000 },
+    { "rating": 5, "comment": "된장찌개 서비스로 주셔서 마무리까지 굿", "meal_time": "회식", "people": 9, "total_price": 290000 },
+    { "rating": 4, "comment": "동기 모임으로 갔는데 양이 넉넉해요", "purposes": ["동기"], "people": 6, "total_price": 186000 },
+    { "rating": 3, "comment": "1인분 양이 생각보다 적어서 추가 많이 함", "purposes": ["팀"], "meal_time": "저녁", "people": 4, "total_price": 152000 },
+    { "rating": 4, "comment": "오돌뼈 매운맛 단계 고를 수 있어 좋아요", "purposes": ["동기", "팀"] }
+  ],
+  "언양닭칼국수": [
+    { "rating": 5, "comment": "닭 한 마리 국물에 칼국수, 해장 겸 점심 최고", "purposes": ["동기"], "meal_time": "점심", "people": 3, "total_price": 33000 },
+    { "rating": 4, "comment": "11시 50분 넘으면 웨이팅 15분은 각오", "purposes": ["팀"], "meal_time": "점심", "people": 4, "total_price": 44000 },
+    { "rating": 5, "comment": "겉절이가 맛있어서 리필 두 번 했어요", "purposes": ["혼밥"], "meal_time": "점심", "people": 1, "total_price": 11000 },
+    { "rating": 4, "comment": "면 양 많아요. 공깃밥은 거의 안 먹게 됨", "meal_time": "점심" },
+    { "rating": 3, "comment": "맛은 좋은데 테이블 간격이 좁아 불편해요", "purposes": ["동기"], "meal_time": "점심", "people": 2, "total_price": 22000 },
+    { "rating": 4, "comment": "비 오는 날 생각나는 맛, 닭고기도 푸짐", "purposes": ["동기", "팀"], "meal_time": "저녁", "people": 3 },
+    { "rating": 5, "comment": "혼자 가도 바 자리 있어서 편해요", "purposes": ["혼밥"], "meal_time": "점심", "people": 1, "total_price": 10500 }
+  ],
+  "진미옥": [
+    { "rating": 5, "comment": "회식 다음 날 아침 콩나물국밥은 여기", "purposes": ["혼밥"], "meal_time": "점심", "people": 1, "total_price": 9000 },
+    { "rating": 4, "comment": "수란 따로 나와서 취향대로 넣어 먹어요", "purposes": ["동기"], "meal_time": "점심", "people": 2, "total_price": 18000 },
+    { "rating": 4, "comment": "아침 7시부터 열어서 출장 전에 들르기 좋음", "purposes": ["혼밥"], "people": 1, "total_price": 9000 },
+    { "rating": 3, "comment": "국물이 제 입엔 조금 짰어요. 양은 넉넉", "purposes": ["혼밥"], "meal_time": "점심", "people": 1 },
+    { "rating": 5, "comment": "오징어 추가하면 해장력 두 배", "meal_time": "점심" },
+    { "rating": 4, "comment": "회전 빨라서 점심시간 짧을 때 딱이에요", "purposes": ["팀"], "meal_time": "점심", "people": 4, "total_price": 38000 }
+  ],
+  "카페꼼마": [
+    { "rating": 5, "comment": "책장 둘러싸인 자리라 집중 잘 돼요", "purposes": ["작업"], "work_env": ["콘센트", "조용함"], "people": 1, "total_price": 6500 },
+    { "rating": 4, "comment": "창가 콘센트 자리는 금방 차요. 오전 추천", "purposes": ["작업"], "work_env": ["콘센트", "와이파이"], "people": 1, "total_price": 6000 },
+    { "rating": 5, "comment": "큰 테이블 있어 4명 미팅도 여유로워요", "purposes": ["미팅"], "work_env": ["좌석 넉넉"], "people": 4, "total_price": 26000 },
+    { "rating": 3, "comment": "주말 오후엔 사람 많아서 꽤 시끄러워요", "purposes": ["휴식"], "work_env": ["와이파이"], "people": 2 },
+    { "rating": 4, "comment": "책 구경하다 보면 시간 순삭, 라떼도 괜찮음", "purposes": ["휴식"], "people": 1, "total_price": 6500 },
+    { "rating": 4, "comment": "클라이언트 미팅 전 자료 정리하기 좋아요", "purposes": ["작업", "미팅"], "work_env": ["콘센트", "와이파이", "좌석 넉넉"] }
+  ],
+  "경복궁": [
+    { "rating": 5, "comment": "룸 분위기 차분해서 클라이언트 접대에 딱", "purposes": ["클라이언트"], "meal_time": "저녁", "people": 4, "total_price": 240000 },
+    { "rating": 4, "comment": "불고기 정식 정갈하고 반찬 하나하나 정성", "purposes": ["클라이언트", "팀"], "meal_time": "점심", "people": 6, "total_price": 210000 },
+    { "rating": 3, "comment": "격식 있는 자리엔 좋지만 가격이 부담돼요", "purposes": ["팀"], "meal_time": "점심", "people": 3, "total_price": 117000 },
+    { "rating": 4, "comment": "주차 편하고 직원분들 응대가 친절해요", "purposes": ["클라이언트"], "meal_time": "저녁" }
+  ],
+  "오마카세": [
+    { "rating": 5, "comment": "런치 오마카세 가성비 좋아요. 예약 필수", "purposes": ["동기"], "meal_time": "점심", "people": 2, "total_price": 90000 },
+    { "rating": 4, "comment": "숙성 생선 맛있는데 좌석이 8석뿐이에요", "purposes": ["클라이언트"], "meal_time": "저녁", "people": 3, "total_price": 255000 },
+    { "rating": 3, "comment": "맛은 좋은데 코스 진행이 좀 느렸어요", "meal_time": "저녁", "people": 2 }
+  ],
+  "코지하우스": [
+    { "rating": 4, "comment": "파스타·필라프 무난, 동기 모임 장소로 편해요", "purposes": ["동기"], "meal_time": "저녁", "people": 5, "total_price": 105000 },
+    { "rating": 3, "comment": "평일 점심 메뉴 나오는 데 20분 걸렸어요", "purposes": ["팀"], "meal_time": "점심", "people": 4, "total_price": 72000 },
+    { "rating": 4, "comment": "매장 넓고 소파 자리라 오래 얘기하기 좋음", "purposes": ["동기", "팀"] }
+  ],
+  "최고당돈가스": [
+    { "rating": 5, "comment": "등심돈가스 바삭하고 두께도 실해요", "purposes": ["혼밥"], "meal_time": "점심", "people": 1, "total_price": 12000 },
+    { "rating": 4, "comment": "치즈돈가스 양 많음. 소스 리필 가능", "purposes": ["동기"], "meal_time": "점심", "people": 3, "total_price": 37500 },
+    { "rating": 2, "comment": "12시 정각엔 줄이 길어 30분 넘게 기다림", "purposes": ["팀"], "meal_time": "점심", "people": 4 }
+  ],
+  "후후쌀국수": [
+    { "rating": 4, "comment": "양지쌀국수 국물 깔끔, 고수 따로 달라면 줌", "purposes": ["혼밥"], "meal_time": "점심", "people": 1, "total_price": 11000 },
+    { "rating": 3, "comment": "맛은 괜찮은데 면이 금방 불어요", "purposes": ["동기"], "meal_time": "점심", "people": 2, "total_price": 23000 }
+  ],
+  "엽기떡볶이": [
+    { "rating": 4, "comment": "야근 전 저녁으로 좋아요. 덜 매운맛도 충분히 매움", "purposes": ["팀"], "meal_time": "저녁", "people": 4, "total_price": 46000 }
+  ],
+  "가회동샤브": [
+    { "rating": 5, "comment": "버섯 샤브에 칼국수·죽까지, 든든한 점심", "purposes": ["동기"], "meal_time": "점심", "people": 3, "total_price": 48000 },
+    { "rating": 3, "comment": "컨벤시아 행사 날엔 자리 잡기 힘들어요", "purposes": ["팀"], "meal_time": "점심", "people": 5 }
+  ],
+  "샹끄발레르": [
+    { "rating": 5, "comment": "소금빵 맛집, 오후 3시면 거의 품절", "purposes": ["휴식"], "work_env": ["좌석 넉넉"], "people": 2, "total_price": 14000 }
+  ],
+  "브런치빈": [
+    { "rating": 4, "comment": "브런치 메뉴 있어 점심 겸 미팅하기 좋아요", "purposes": ["미팅"], "work_env": ["좌석 넉넉"], "people": 3, "total_price": 45000 },
+    { "rating": 3, "comment": "콘센트 자리가 적어서 노트북 작업은 비추", "purposes": ["작업"], "work_env": ["와이파이"], "people": 1, "total_price": 6000 }
+  ],
+  "질마재": [
+    { "rating": 5, "comment": "대창 기름 쫙 빠지게 구워줌, 2차 회식 강추", "purposes": ["팀"], "meal_time": "회식", "people": 7, "total_price": 260000 }
+  ],
+  "영미화김밥": [],
+  "움버거": []
+}

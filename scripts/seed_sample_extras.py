@@ -12,15 +12,7 @@ import json
 import random
 from datetime import timedelta
 
-from seed_sample_reviews import (
-    EXCLUDE_NAMES,
-    EXISTING,
-    NOW,
-    PLACES_JSON,
-    PLAN,
-    ROOT,
-    sql_str,
-)
+from seed_sample_reviews import NOW, REVIEWS, ROOT, find_place, load_places, sql_str
 
 PHOTOS_JSON = ROOT / "scripts/data/sample_photos.json"
 OUT_SQL = ROOT / "supabase/seed/sample_photos_favorites.sql"
@@ -29,16 +21,10 @@ FAVORITES_PER_REVIEW = 3  # 예시 찜 수 ≈ 리뷰 수 × 3 + 약간의 흔�
 
 def main() -> None:
     rng = random.Random(20261005)
-    collected = [
-        p
-        for p in json.loads(PLACES_JSON.read_text(encoding="utf-8"))
-        if not any(x in p["name"] for x in EXCLUDE_NAMES)
-    ]
+    collected = load_places()
 
     def find_id(key: str) -> str:
-        if key in EXISTING:
-            return EXISTING[key]
-        return next(p["id"] for p in collected if key in p["name"])
+        return find_place(key, collected)[0]
 
     photos = json.loads(PHOTOS_JSON.read_text(encoding="utf-8"))
     photo_rows = []
@@ -55,9 +41,9 @@ def main() -> None:
             )
 
     favorite_rows = [
-        f"update public.places set sample_favorite_count = {count * FAVORITES_PER_REVIEW + rng.randint(0, 5)} where id = {sql_str(find_id(key))};"
-        for key, _, count, _ in PLAN
-        if count > 0
+        f"update public.places set sample_favorite_count = {len(reviews) * FAVORITES_PER_REVIEW + rng.randint(0, 5)} where id = {sql_str(find_id(key))};"
+        for key, reviews in REVIEWS.items()
+        if reviews
     ]
 
     OUT_SQL.write_text(
