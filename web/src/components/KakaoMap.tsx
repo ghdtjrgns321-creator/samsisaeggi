@@ -40,10 +40,12 @@ export default function KakaoMap({ places }: { places: Place[] }) {
       }
       map.setBounds(bounds);
 
-      // 창 크기가 바뀌면(회전·PC 리사이즈) 지도는 스스로 다시 그리지 않으므로 직접 갱신
+      // 창 크기가 바뀌면(회전·PC 리사이즈) 지도는 스스로 다시 그리지 않으므로 직접 갱신.
+      // 사용자가 옮겨둔 위치는 유지한다.
       new ResizeObserver(() => {
+        const center = map.getCenter();
         map.relayout();
-        map.setBounds(bounds);
+        map.setCenter(center);
       }).observe(containerRef.current);
     });
   };
