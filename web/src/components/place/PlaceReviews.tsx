@@ -21,7 +21,7 @@ export default function PlaceReviews({ version, onWrite }: { version: number; on
   }, [place.id, onToast, version]);
 
   return (
-    <section className="border-t-8 border-surface px-5 pt-4 pb-[max(2rem,env(safe-area-inset-bottom))]">
+    <section className="border-t-8 border-surface px-5 pt-4 pb-2">
       <div className="flex items-center justify-between">
         <h3 className="text-base font-bold">
           리뷰 {reviews && reviews.length > 0 && <span className="text-primary">{reviews.length}</span>}

@@ -1,6 +1,7 @@
-// 리뷰 한 건: 별점 · 날짜 · (예시) / 한줄평 / 시간대·용도·인원·1인 가격·작업 환경 태그 / 붙인 사진
+// 리뷰 한 건: 별점 · 날짜 · (예시) / 한줄평 / 시간대·용도·인원·1인 가격·작업 환경 태그 / 붙인 사진 (1장 = 가로로 꽉 차게, 여러 장 = 옆으로 넘기기)
 import type { Review } from "@/types/review";
 import Star, { starFills } from "@/components/review/Star";
+import PhotoTile from "./PhotoTile";
 
 function formatDate(iso: string): string {
   const d = new Date(iso);
@@ -41,11 +42,11 @@ export default function ReviewItem({ review }: { review: Review }) {
           ))}
         </div>
       )}
-      {review.photos.length > 0 && (
-        <div className="mt-2 flex gap-1 overflow-x-auto">
+      {review.photos.length === 1 && <PhotoTile photo={review.photos[0]} className="mt-2.5 aspect-[4/3] w-full rounded-xl" />}
+      {review.photos.length > 1 && (
+        <div className="mt-2.5 flex gap-1.5 overflow-x-auto">
           {review.photos.map((p) => (
-            // eslint-disable-next-line @next/next/no-img-element -- 저장소 사진 URL
-            <img key={p.id} src={p.url} alt="" loading="lazy" className="h-16 w-16 shrink-0 rounded-lg object-cover" />
+            <PhotoTile key={p.id} photo={p} className="size-30 shrink-0 rounded-lg" />
           ))}
         </div>
       )}
