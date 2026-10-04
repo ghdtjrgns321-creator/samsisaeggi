@@ -1,6 +1,6 @@
 "use client";
 
-// 지도 핀이 없는 장소(미등록·리뷰 0개)에 임시 주황 핀을 하나만 띄운다. 핀을 누르면 onSelect.
+// 지도 핀이 없는 장소(미등록·리뷰 0개)에 임시 검정 핀을 하나만 띄운다. 핀을 누르면 onSelect.
 // null을 넘기거나 리뷰 있는 장소를 넘기면 임시 핀을 지운다 (리뷰 있는 곳은 이미 핀이 있음).
 import { useCallback, useEffect, useRef } from "react";
 import type { KakaoMap } from "@/lib/kakao/sdk";

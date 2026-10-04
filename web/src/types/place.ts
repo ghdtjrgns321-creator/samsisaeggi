@@ -5,6 +5,7 @@ export type PlaceBase = {
   id: string; // Kakao 장소 id
   name: string;
   category: string;
+  categoryPath: string; // Kakao 분류 전체 경로 ("음식점 > 술집 > 호프,요리주점"). 경로 저장 전 등록 장소는 ""
   groupCode: string; // Kakao 분류 코드 (FD6 음식점, CE7 카페 …). 없으면 ""
   address: string;
   phone: string;

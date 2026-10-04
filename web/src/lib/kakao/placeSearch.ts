@@ -25,6 +25,7 @@ export function toPlaceBase(raw: RawPlace): PlaceBase {
     id: raw.id,
     name: raw.place_name,
     category,
+    categoryPath: raw.category_name,
     address: raw.road_address_name || raw.address_name,
     phone: raw.phone,
     // Kakao는 빵집을 음식점(음식점 > 간식 > 제과,베이커리)에 넣지만, 삼시세끼는 카페로 본다 (빵+커피, 휴식·미팅 용도)

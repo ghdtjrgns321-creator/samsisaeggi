@@ -8,7 +8,7 @@ import { useEffect, useRef } from "react";
 import type { Place, PlaceSummary } from "@/types/place";
 import type { KakaoMap } from "@/lib/kakao/sdk";
 import { placePinLabel, resultPinElement } from "@/lib/kakao/overlays";
-import { labelBox, pickVisible } from "@/lib/map/labelLayout";
+import { BADGE_EXTRA_PX, labelBox, pickVisible } from "@/lib/map/labelLayout";
 
 const MAX_RESULT_PINS = 5;
 
@@ -52,7 +52,7 @@ export function useResultPins(
       const bottom = toPoint(b.getSouthWest().getLat(), b.getSouthWest().getLng()).y - bottomCoverPx;
       const fixed = registered.map((p) => {
         const pt = toPoint(p.lat, p.lng);
-        return labelBox(placePinLabel(p, namedIds.has(p.id)), pt.x, pt.y);
+        return labelBox(placePinLabel(p, namedIds.has(p.id)), pt.x, pt.y, BADGE_EXTRA_PX);
       });
       const candidates = pins.map(({ place }) => {
         const pt = toPoint(place.lat, place.lng);

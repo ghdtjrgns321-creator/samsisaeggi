@@ -1,9 +1,9 @@
 "use client";
 
-// 동료가 올린 사진. 첫 장이 대표 사진(크게), 나머지는 3칸 격자. 없으면 첫 사진 남기기 안내.
-// 예시 사진은 "예시 사진" 표시 + 출처(작성자·라이선스)를 사진 위에 작게 붙인다.
+// 동료가 리뷰와 함께 올린 사진을 모아 보여준다. 첫 장이 대표 사진(크게), 나머지는 3칸 격자. 없으면 첫 사진 남기기 안내.
 import { useEffect, useState } from "react";
 import { fetchPhotos, type Photo } from "@/lib/db/photos";
+import PhotoTile from "./PhotoTile";
 import { usePlaceSheet } from "./PlaceSheetContext";
 
 function CameraIcon() {
@@ -12,23 +12,6 @@ function CameraIcon() {
       <path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3Z" />
       <circle cx="12" cy="13" r="3" />
     </svg>
-  );
-}
-
-function PhotoTile({ photo, className }: { photo: Photo; className: string }) {
-  return (
-    <div className={`relative overflow-hidden ${className}`}>
-      {/* eslint-disable-next-line @next/next/no-img-element -- 외부 저장소·자유 이용 사진 URL */}
-      <img src={photo.url} alt="" loading="lazy" className="h-full w-full object-cover" />
-      {photo.isSample && (
-        <span className="absolute top-1.5 left-1.5 rounded bg-black/55 px-1.5 py-0.5 text-[10px] text-white">예시 사진</span>
-      )}
-      {photo.credit && (
-        <span className="absolute inset-x-0 bottom-0 truncate bg-gradient-to-t from-black/60 to-transparent px-1.5 pt-3 pb-1 text-[9px] text-white/90">
-          {photo.credit}
-        </span>
-      )}
-    </div>
   );
 }
 
@@ -69,7 +52,7 @@ export default function PlacePhotos({ version, onUpload }: { version: number; on
           )}
         </div>
       ) : (
-        // 접힌 시트에서 위쪽 절반만 보이도록 낮은 가로형 + 주황 톤으로 눈에 띄게
+        // 낮은 가로형 + 주황 톤으로 눈에 띄게
         <button
           type="button"
           onClick={onUpload}

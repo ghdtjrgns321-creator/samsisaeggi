@@ -8,6 +8,7 @@ const LABEL_PADDING_X = 9;
 const LABEL_HEIGHT = 26;
 const TAIL_HEIGHT = 4;
 const GAP = 2; // 말풍선 사이 최소 여백
+export const BADGE_EXTRA_PX = 15; // 종류 이모지 원(16) + 간격(4) − 줄어든 왼쪽 여백(9→4). globals.css .pin-badge
 
 let measureCtx: CanvasRenderingContext2D | null = null;
 
@@ -19,9 +20,9 @@ function labelWidth(text: string): number {
   return measureCtx.measureText(text).width + LABEL_PADDING_X * 2;
 }
 
-/** 꼬리 끝이 (x, y)에 오는 말풍선의 화면 영역 */
-export function labelBox(text: string, x: number, y: number): Box {
-  const half = labelWidth(text) / 2;
+/** 꼬리 끝이 (x, y)에 오는 말풍선의 화면 영역. extraPx = 글자 밖 폭 (종류 이모지 원) */
+export function labelBox(text: string, x: number, y: number, extraPx = 0): Box {
+  const half = (labelWidth(text) + extraPx) / 2;
   const bottom = y - TAIL_HEIGHT;
   return { left: x - half - GAP, right: x + half + GAP, top: bottom - LABEL_HEIGHT - GAP, bottom: bottom + GAP };
 }

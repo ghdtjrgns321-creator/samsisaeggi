@@ -8,7 +8,6 @@
   --gray: #737373;
   --line: #e6e6e6;
   --surface: #f6f6f6;
-  --cafe: #8b5a2b;
   --location: #2978f2;
 }
 
@@ -34,10 +33,10 @@ body {
   flex-direction: column;
   align-items: center;
 }
-.pin-cafe {
-  --pin-color: var(--cafe);
-}
 .pin-label {
+  display: flex;
+  align-items: center;
+  gap: 4px;
   background: var(--pin-color);
   color: #fff;
   border-radius: 999px;
@@ -47,6 +46,26 @@ body {
   white-space: nowrap;
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
 }
+/* 등록 장소: 주황 반투명(지도를 덜 가림) + 종류 이모지 흰 원 (원 폭은 lib/map/labelLayout.ts BADGE_EXTRA_PX와 맞춤).
+   말풍선·꼬리가 겹치는 곳이 진해지지 않게 색이 아니라 핀 전체에 투명도를 준다 */
+.pin-place {
+  --pin-color: #fb8c4b; /* 브랜드 주황(--primary)보다 연하게 */
+  opacity: 0.92;
+}
+.pin-place .pin-label {
+  padding-left: 4px;
+}
+.pin-badge {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 16px;
+  height: 16px;
+  border-radius: 999px;
+  background: #fff;
+  font-size: 10px;
+  line-height: 1;
+}
 .pin-tail {
   width: 9px;
   height: 9px;
@@ -55,7 +74,7 @@ body {
   margin-top: -5px;
 }
 .search-pin {
-  --pin-color: var(--primary);
+  --pin-color: var(--ink);
 }
 
 /* 내 위치 점 */
@@ -68,7 +87,10 @@ body {
   box-shadow: 0 0 0 6px rgba(41, 120, 242, 0.2);
 }
 
-/* 엔터 검색 결과 중 리뷰 없는 장소: 흰 말풍선 */
+/* 엔터 검색 결과 중 리뷰 없는 장소: 흰 말풍선 (투명도는 .pin-place와 같게) */
+.result-pin {
+  opacity: 0.92;
+}
 .result-pin .pin-label {
   background: #fff;
   color: var(--ink);

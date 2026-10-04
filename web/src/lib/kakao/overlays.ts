@@ -1,12 +1,20 @@
 // 지도 위에 올리는 DOM 요소들. 스타일은 globals.css의 .pin / .search-pin / .my-location-dot.
 import type { Place } from "@/types/place";
+import { placeKindEmoji } from "@/lib/placeKind";
 
-function pin(className: string, label: string): HTMLElement {
+/** badge가 있으면 말풍선 왼쪽 흰 원에 넣는다 (등록 장소 종류 이모지) */
+function pin(className: string, label: string, badge?: string): HTMLElement {
   const el = document.createElement("div");
   el.className = `pin ${className}`;
   const text = document.createElement("span");
   text.className = "pin-label";
-  text.textContent = label;
+  if (badge) {
+    const icon = document.createElement("span");
+    icon.className = "pin-badge";
+    icon.textContent = badge;
+    text.append(icon);
+  }
+  text.append(label);
   const tail = document.createElement("span");
   tail.className = "pin-tail";
   el.append(text, tail);
@@ -19,9 +27,9 @@ export function placePinLabel(place: Place, withName: boolean): string {
   return withName ? `${star} ${place.name}`.trim() : star;
 }
 
-/** 삼시세끼 등록 장소 핀 (식당 검정 / 카페 갈색) */
+/** 삼시세끼 등록 장소 핀: 주황 반투명 말풍선 + 종류 이모지(밥·술·커피·빵·고기·회) */
 export function placePinElement(place: Place, withName: boolean): HTMLElement {
-  return pin(place.groupCode === "CE7" ? "pin-cafe" : "pin-restaurant", placePinLabel(place, withName));
+  return pin("pin-place", placePinLabel(place, withName), placeKindEmoji(place));
 }
 
 /** 검색으로 고른 미등록 장소 임시 핀 */
