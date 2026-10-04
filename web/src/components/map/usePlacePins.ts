@@ -1,12 +1,18 @@
 "use client";
 
-// 삼시세끼 등록 장소들을 지도에 핀으로 올린다. 핀을 누르면 onSelect.
+// 삼시세끼 등록 장소들을 지도에 핀으로 올린다. 핀을 누르면 onSelect. 필터에 안 맞는 핀은 숨긴다.
 import { useEffect, useRef } from "react";
 import type { Place } from "@/data/places";
 import type { KakaoMap } from "@/lib/kakao/sdk";
 import { placePinElement } from "@/lib/kakao/overlays";
+import { matchesFilters, type Filters } from "@/lib/filters";
 
-export function usePlacePins(map: KakaoMap | null, places: Place[], onSelect: (place: Place) => void) {
+export function usePlacePins(
+  map: KakaoMap | null,
+  places: Place[],
+  filters: Filters,
+  onSelect: (place: Place) => void,
+) {
   // 렌더마다 바뀌는 콜백 때문에 핀을 다시 그리지 않도록 최신 값만 ref로 참조
   const onSelectRef = useRef(onSelect);
   useEffect(() => {
@@ -17,7 +23,7 @@ export function usePlacePins(map: KakaoMap | null, places: Place[], onSelect: (p
     if (!map) return;
     const { maps } = window.kakao;
 
-    const overlays = places.map((place) => {
+    const overlays = places.filter((place) => matchesFilters(place, filters)).map((place) => {
       const content = placePinElement(place);
       content.addEventListener("click", () => onSelectRef.current(place));
       return new maps.CustomOverlay({
@@ -31,5 +37,5 @@ export function usePlacePins(map: KakaoMap | null, places: Place[], onSelect: (p
     });
 
     return () => overlays.forEach((o) => o.setMap(null));
-  }, [map, places]);
+  }, [map, places, filters]);
 }

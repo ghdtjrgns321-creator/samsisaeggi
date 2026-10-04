@@ -76,7 +76,7 @@ export default function SearchBar({ map, registered, onSelect, onSubmitSearch, o
   const showList = open && keyword.trim() !== "" && results.query !== "";
 
   return (
-    <div ref={containerRef} className="absolute inset-x-4 top-4 z-10 overflow-hidden rounded-2xl bg-white shadow-md">
+    <div ref={containerRef} className="absolute inset-x-4 top-4 z-10 overflow-hidden rounded-xl bg-white shadow-[0_2px_10px_rgba(0,0,0,0.1)]">
       <form
         onSubmit={(e) => {
           e.preventDefault();
@@ -85,7 +85,7 @@ export default function SearchBar({ map, registered, onSelect, onSubmitSearch, o
           close(); // 목록 닫고 휴대폰 키보드 내리기
           onSubmitSearch(q);
         }}
-        className="flex h-13 items-center gap-3 px-4"
+        className="flex h-12 items-center gap-2.5 px-3.5"
       >
         <span className="shrink-0 font-bold text-primary">삼시세끼</span>
         <span className="h-4 w-px shrink-0 bg-line" />

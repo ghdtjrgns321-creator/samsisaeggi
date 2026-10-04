@@ -9,6 +9,9 @@ export type Place = PlaceBase & {
   kakaoUrl: string;
   reviewCount: number; // 삼시세끼 리뷰 수 (DB 연결 전까지 0)
   rating: number | null; // 평균 별점 (리뷰 없으면 null)
+  mealTimes: string[]; // 리뷰에 적힌 시간대 (점심·저녁·회식). 태그 필터에 쓰임
+  purposes: string[]; // 리뷰에 적힌 용도 (혼밥·동기·팀·클라이언트)
+  pricePerPerson: number | null; // 리뷰 1인 가격 중앙값
 };
 
 export const PLACES: Place[] = [
@@ -25,7 +28,10 @@ export const PLACES: Place[] = [
     "lng": 126.64523848075555,
     "kakaoUrl": "http://place.map.kakao.com/775002048",
     "reviewCount": 0,
-    "rating": null
+    "rating": null,
+    "mealTimes": [],
+    "purposes": [],
+    "pricePerPerson": null
   },
   {
     "id": "939156377",
@@ -40,7 +46,10 @@ export const PLACES: Place[] = [
     "lng": 126.646153470478,
     "kakaoUrl": "http://place.map.kakao.com/939156377",
     "reviewCount": 0,
-    "rating": null
+    "rating": null,
+    "mealTimes": [],
+    "purposes": [],
+    "pricePerPerson": null
   },
   {
     "id": "27418261",
@@ -55,7 +64,10 @@ export const PLACES: Place[] = [
     "lng": 126.644935221548,
     "kakaoUrl": "http://place.map.kakao.com/27418261",
     "reviewCount": 0,
-    "rating": null
+    "rating": null,
+    "mealTimes": [],
+    "purposes": [],
+    "pricePerPerson": null
   },
   {
     "id": "604749104",
@@ -70,7 +82,10 @@ export const PLACES: Place[] = [
     "lng": 126.633965661604,
     "kakaoUrl": "http://place.map.kakao.com/604749104",
     "reviewCount": 0,
-    "rating": null
+    "rating": null,
+    "mealTimes": [],
+    "purposes": [],
+    "pricePerPerson": null
   },
   {
     "id": "26354443",
@@ -85,6 +100,9 @@ export const PLACES: Place[] = [
     "lng": 126.63886487344135,
     "kakaoUrl": "http://place.map.kakao.com/26354443",
     "reviewCount": 0,
-    "rating": null
+    "rating": null,
+    "mealTimes": [],
+    "purposes": [],
+    "pricePerPerson": null
   }
 ];

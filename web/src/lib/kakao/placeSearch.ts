@@ -49,17 +49,17 @@ export function searchPlaces(keyword: string, map: KakaoMap): Promise<PlaceBase[
 
 const MAX_PAGES = 3; // Kakao 한도: 페이지당 15곳 × 3페이지 = 45곳
 
-/** 지금 지도 화면 안에서만 검색 (엔터 검색 결과를 지도에 띄울 때) */
-export function searchPlacesInView(keyword: string, map: KakaoMap): Promise<PlaceBase[]> {
+/** Kakao 검색 함수(keywordSearch·categorySearch)를 지금 화면 범위로 실행하고 최대 3페이지까지 모은다 */
+function collectInView(
+  run: (callback: (data: RawPlace[], status: string, pagination: any) => void, options: object) => void, // eslint-disable-line @typescript-eslint/no-explicit-any
+  map: KakaoMap,
+): Promise<PlaceBase[]> {
   const { services } = window.kakao.maps;
-  const places = new services.Places();
   const collected: RawPlace[] = [];
 
   return new Promise((resolve, reject) => {
-    places.keywordSearch(
-      keyword,
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      (data: RawPlace[], status: string, pagination: any) => {
+    run(
+      (data, status, pagination) => {
         if (status === services.Status.ZERO_RESULT) return resolve([]);
         if (status !== services.Status.OK) return reject(new Error(`Kakao 장소 검색 실패: ${status}`));
         collected.push(...data);
@@ -70,4 +70,16 @@ export function searchPlacesInView(keyword: string, map: KakaoMap): Promise<Plac
       { bounds: map.getBounds() },
     );
   });
+}
+
+/** 지금 지도 화면 안에서 검색어로 찾기 (엔터 검색) */
+export function searchPlacesInView(keyword: string, map: KakaoMap): Promise<PlaceBase[]> {
+  const places = new window.kakao.maps.services.Places();
+  return collectInView((cb, options) => places.keywordSearch(keyword, cb, options), map);
+}
+
+/** 지금 지도 화면 안의 분류(음식점 FD6·카페 CE7) 장소 (필터 칩) */
+export function categoryPlacesInView(code: string, map: KakaoMap): Promise<PlaceBase[]> {
+  const places = new window.kakao.maps.services.Places();
+  return collectInView((cb, options) => places.categorySearch(code, cb, options), map);
 }

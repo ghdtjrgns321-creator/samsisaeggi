@@ -1,12 +1,13 @@
 "use client";
 
 // 지도 홈 화면: 지도 + 상단 검색창 + 하단(내 위치 버튼·장소 카드·근처 목록)을 조립하고, 선택 상태를 관리.
-import { useCallback, useRef, useState } from "react";
+import { useCallback, useMemo, useRef, useState } from "react";
 import type { Place } from "@/data/places";
 import type { PlaceSummary } from "@/types/place";
 import type { KakaoMap as KakaoMapInstance } from "@/lib/kakao/sdk";
 import { fitToPlaces, focusOn, panIntoView } from "@/lib/kakao/mapView";
 import { getLinkedPlaceId } from "@/lib/deepLink";
+import { EMPTY_FILTERS, FILTER_GROUPS, hasReviewFilter, matchesFilters, type Filters } from "@/lib/filters";
 import KakaoMap from "./map/KakaoMap";
 import { useAreaSearch } from "./map/useAreaSearch";
 import MyLocationButton from "./map/MyLocationButton";
@@ -16,6 +17,7 @@ import { useSearchPin } from "./map/useSearchPin";
 import { useTapToPick } from "./map/useTapToPick";
 import NearbyList from "./place/NearbyList";
 import PlaceSheet from "./place/PlaceSheet";
+import FilterChips from "./search/FilterChips";
 import SearchBar from "./search/SearchBar";
 import Toast from "./Toast";
 import { useElementHeight } from "@/hooks/useElementHeight";
@@ -29,6 +31,7 @@ export default function MapHome({ places }: { places: Place[] }) {
   const [selected, setSelected] = useState<PlaceSummary | null>(null);
   const [candidates, setCandidates] = useState<PlaceSummary[] | null>(null);
   const [areaKeyword, setAreaKeyword] = useState<string | null>(null); // 엔터 검색어 (null = 검색 안 함)
+  const [filters, setFilters] = useState<Filters>(EMPTY_FILTERS);
   const [toast, setToast] = useState<string | null>(null);
   const toastTimerRef = useRef<ReturnType<typeof setTimeout>>(undefined);
 
@@ -56,7 +59,7 @@ export default function MapHome({ places }: { places: Place[] }) {
     if (map) panIntoView(map, place.lat, place.lng);
   };
 
-  usePlacePins(map, places, handlePinSelect);
+  usePlacePins(map, places, filters, handlePinSelect);
   const showTempPin = useSearchPin(map, handlePinSelect);
 
   // 임시 핀이 필요한 선택(지도에서 누른 장소·근처 목록) → 임시 핀 + 카드
@@ -82,11 +85,26 @@ export default function MapHome({ places }: { places: Place[] }) {
   // 지도 위 장소를 누름 → 1곳이면 카드, 여러 곳이면 근처 목록
   useTapToPick(map, places, { onPick: pickPlace, onCandidates: showCandidates, onMiss: closeAll });
 
-  // 엔터 검색: 화면 안 결과를 말풍선으로. 대표적인 곳부터 보이고 확대할수록 더 드러남
-  const areaResults = useAreaSearch(map, areaKeyword, places, (keyword) =>
-    showToast(`지금 화면에 '${keyword}' 결과가 없어요`),
-  );
-  useResultPins(map, areaResults, places, handlePinSelect);
+  // 엔터 검색어·장소 종류 태그: 화면 안 결과를 말풍선으로. 대표적인 곳부터 보이고 확대할수록 더 드러남
+  const areaResults = useAreaSearch(map, { keyword: areaKeyword, kind: filters.kind }, places, () => {
+    const kindLabel = FILTER_GROUPS[0].options.find((o) => o.value === filters.kind)?.label;
+    showToast(`지금 화면에 ${areaKeyword ? `'${areaKeyword}'` : kindLabel} 결과가 없어요`);
+  });
+  // 리뷰 값 태그(시간대·용도·가격)가 켜지면 리뷰 없는 검색 결과는 조건을 알 수 없으므로 숨긴다
+  // useMemo: 렌더마다 새 배열이 되면 말풍선을 매번 다시 그리게 되므로 고정
+  const visibleResults = useMemo(() => (hasReviewFilter(filters) ? [] : areaResults), [filters, areaResults]);
+  const visibleRegistered = useMemo(() => places.filter((p) => matchesFilters(p, filters)), [places, filters]);
+  useResultPins(map, visibleResults, visibleRegistered, handlePinSelect);
+
+  // 태그: 리뷰 값 태그를 새로 켰는데 맞는 등록 장소가 없으면 바로 알려준다
+  const handleFiltersChange = (next: Filters) => {
+    setFilters(next);
+    const turnedOnReviewTag = hasReviewFilter(next) && JSON.stringify(next) !== JSON.stringify(filters);
+    if (turnedOnReviewTag && !places.some((p) => matchesFilters(p, next))) {
+      showToast("아직 조건에 맞는 리뷰가 없어요");
+    }
+  };
+
   const handleSubmitSearch = (keyword: string) => {
     closeAll();
     setAreaKeyword(keyword);
@@ -110,6 +128,7 @@ export default function MapHome({ places }: { places: Place[] }) {
         onSubmitSearch={handleSubmitSearch}
         onClear={() => setAreaKeyword(null)}
       />
+      <FilterChips filters={filters} onChange={handleFiltersChange} />
 
       <div className="pointer-events-none absolute inset-x-0 bottom-0 z-10 flex flex-col items-end gap-3">
         <div className="pointer-events-auto mr-4 mb-3 last:mb-6">
