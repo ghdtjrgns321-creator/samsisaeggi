@@ -126,7 +126,8 @@ export default function MapHome() {
     [pinnedPlaces, bounds],
   );
   const regionName = useRegionName(map, bounds);
-  const namedKey = [...namedPinIds(placesInView)]
+  // 이름까지 보여줄 핀 = 고른 장소가 있으면 그곳만, 없으면 화면 안 1위
+  const namedKey = (selected ? [selected.id] : [...namedPinIds(placesInView)])
     .sort()
     .join(",");
   const namedIds = useMemo(() => new Set(namedKey.split(",")), [namedKey]);
