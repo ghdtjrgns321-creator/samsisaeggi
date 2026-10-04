@@ -9,6 +9,7 @@
   --line: #e6e6e6;
   --surface: #f6f6f6;
   --cafe: #8b5a2b;
+  --location: #2978f2;
 }
 
 @theme inline {
@@ -52,4 +53,17 @@ body {
   background: var(--pin-color);
   transform: rotate(45deg);
   margin-top: -5px;
+}
+.search-pin {
+  --pin-color: var(--primary);
+}
+
+/* 내 위치 점 */
+.my-location-dot {
+  width: 16px;
+  height: 16px;
+  border-radius: 999px;
+  background: var(--location);
+  border: 3px solid #fff;
+  box-shadow: 0 0 0 6px rgba(41, 120, 242, 0.2);
 }

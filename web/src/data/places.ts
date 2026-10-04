@@ -1,4 +1,4 @@
-// 시드 장소 (Kakao 로컬 검색 결과). DB 연결 전 임시 데이터.
+// 시드 장소 (Kakao 로컬 검색 결과). DB 연결 전 임시 데이터. id = Kakao 장소 id
 export type PlaceKind = "restaurant" | "cafe";
 
 export type Place = {
@@ -12,6 +12,7 @@ export type Place = {
   lat: number;
   lng: number;
   kakaoUrl: string;
+  reviewCount: number; // 삼시세끼 리뷰 수 (DB 연결 전까지 0)
 };
 
 export const PLACES: Place[] = [
@@ -25,7 +26,8 @@ export const PLACES: Place[] = [
     "phone": "032-832-1218",
     "lat": 37.39181623951587,
     "lng": 126.64523848075555,
-    "kakaoUrl": "http://place.map.kakao.com/775002048"
+    "kakaoUrl": "http://place.map.kakao.com/775002048",
+    "reviewCount": 0
   },
   {
     "id": "939156377",
@@ -37,7 +39,8 @@ export const PLACES: Place[] = [
     "phone": "010-4181-4988",
     "lat": 37.3958393224301,
     "lng": 126.646153470478,
-    "kakaoUrl": "http://place.map.kakao.com/939156377"
+    "kakaoUrl": "http://place.map.kakao.com/939156377",
+    "reviewCount": 0
   },
   {
     "id": "27418261",
@@ -49,7 +52,8 @@ export const PLACES: Place[] = [
     "phone": "032-833-0444",
     "lat": 37.3929046600718,
     "lng": 126.644935221548,
-    "kakaoUrl": "http://place.map.kakao.com/27418261"
+    "kakaoUrl": "http://place.map.kakao.com/27418261",
+    "reviewCount": 0
   },
   {
     "id": "604749104",
@@ -61,7 +65,8 @@ export const PLACES: Place[] = [
     "phone": "032-719-7222",
     "lat": 37.3979601584889,
     "lng": 126.633965661604,
-    "kakaoUrl": "http://place.map.kakao.com/604749104"
+    "kakaoUrl": "http://place.map.kakao.com/604749104",
+    "reviewCount": 0
   },
   {
     "id": "26354443",
@@ -73,6 +78,7 @@ export const PLACES: Place[] = [
     "phone": "032-834-2345",
     "lat": 37.39088421513732,
     "lng": 126.63886487344135,
-    "kakaoUrl": "http://place.map.kakao.com/26354443"
+    "kakaoUrl": "http://place.map.kakao.com/26354443",
+    "reviewCount": 0
   }
 ];
