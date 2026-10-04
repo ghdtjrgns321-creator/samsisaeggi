@@ -4,7 +4,7 @@
 // 손잡이나 살짝 보이는 사진 칸을 위로 끌거나 누르면 펼쳐져 사진 → 카카오맵 링크 → 리뷰를 스크롤로 본다.
 // 음식점·카페가 아닌 장소는 기본 정보만 (펼치기 없음).
 import { useRef, useState } from "react";
-import type { PlaceStats, PlaceSummary } from "@/types/place";
+import type { Place, PlaceStats, PlaceSummary } from "@/types/place";
 import { isReviewable } from "@/lib/kakao/categories";
 import { useElementHeight } from "@/hooks/useElementHeight";
 import { useVerticalDrag } from "@/hooks/useVerticalDrag";
@@ -12,18 +12,21 @@ import KakaoPlaceLink from "./KakaoPlaceLink";
 import PlaceInfo from "./PlaceInfo";
 import PlacePhotos from "./PlacePhotos";
 import PlaceReviews from "./PlaceReviews";
+import { PlaceSheetProvider } from "./PlaceSheetContext";
 
 const HANDLE_HEIGHT = 20; // 손잡이 영역 (pt-2 + 막대 + 여백)
 const PEEK_HEIGHT = 96; // 접힌 상태에서 보이는 사진 칸: 구분선 + "사진" 제목(60px) + 빈 사진 상자(72px)의 위쪽 절반 → 잘려 보여 끌어올리고 싶게
 
 type Props = {
   place: PlaceSummary;
+  registered: Place | undefined; // 등록 장소면 DB 집계값
   stats: PlaceStats | null;
   maxHeight: number; // 펼쳤을 때 높이 (지도 화면 전체)
   onToast: (msg: string) => void;
+  onChanged: () => void; // 찜·리뷰·사진을 바꾼 뒤 등록 장소 다시 불러오기
 };
 
-export default function PlaceSheet({ place, stats, maxHeight, onToast }: Props) {
+export default function PlaceSheet({ place, registered, stats, maxHeight, onToast, onChanged }: Props) {
   const expandable = isReviewable(place);
   const [expanded, setExpanded] = useState(false);
   const infoRef = useRef<HTMLDivElement>(null);
@@ -39,15 +42,20 @@ export default function PlaceSheet({ place, stats, maxHeight, onToast }: Props) 
   const baseHeight = expanded ? maxHeight : collapsedHeight;
   const height = Math.min(maxHeight, Math.max(collapsedHeight, baseHeight - dy));
 
+  const sheetValue = { place, registered, onToast, onChanged };
+
   if (!expandable) {
     return (
+      <PlaceSheetProvider value={sheetValue}>
       <section className="w-full rounded-t-2xl bg-white pt-5 pb-[env(safe-area-inset-bottom)] shadow-[0_-4px_16px_rgba(0,0,0,0.12)]">
-        <PlaceInfo place={place} stats={stats} onToast={onToast} />
+        <PlaceInfo stats={stats} />
       </section>
+      </PlaceSheetProvider>
     );
   }
 
   return (
+    <PlaceSheetProvider value={sheetValue}>
     <section
       style={{ height: infoHeight ? height : undefined }}
       className={`flex w-full flex-col overflow-hidden bg-white shadow-[0_-4px_16px_rgba(0,0,0,0.12)] ${
@@ -60,7 +68,7 @@ export default function PlaceSheet({ place, stats, maxHeight, onToast }: Props) 
 
       <div className={`relative min-h-0 flex-1 ${expanded ? "overflow-y-auto" : "overflow-hidden"}`}>
         <div ref={infoRef}>
-          <PlaceInfo place={place} stats={stats} onToast={onToast} />
+          <PlaceInfo stats={stats} />
         </div>
         <PlacePhotos photoUrls={[]} onUpload={() => onToast("사진 올리기는 준비 중이에요")} />
         <KakaoPlaceLink place={place} />
@@ -72,5 +80,6 @@ export default function PlaceSheet({ place, stats, maxHeight, onToast }: Props) 
         )}
       </div>
     </section>
+    </PlaceSheetProvider>
   );
 }

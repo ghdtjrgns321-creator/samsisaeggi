@@ -4,11 +4,10 @@
 // 엔터를 누르면 목록을 닫고 onSubmitSearch(지도 화면 안 결과를 핀으로), ✕를 누르면 onClear.
 // 검색창 밖을 누르면 목록을 닫고, 다시 입력창을 누르면 직전 결과를 다시 연다.
 import { useCallback, useEffect, useRef, useState } from "react";
-import type { Place } from "@/data/places";
+import type { Place, PlaceSummary } from "@/types/place";
 import type { KakaoMap } from "@/lib/kakao/sdk";
 import { searchPlaces } from "@/lib/kakao/placeSearch";
 import { rankResults } from "@/lib/search/rankResults";
-import type { PlaceSummary } from "@/types/place";
 import { useDebouncedValue } from "@/hooks/useDebouncedValue";
 import { useClickOutside } from "@/hooks/useClickOutside";
 import SearchResultList from "./SearchResultList";

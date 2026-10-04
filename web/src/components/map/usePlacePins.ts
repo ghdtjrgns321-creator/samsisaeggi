@@ -2,7 +2,7 @@
 
 // 삼시세끼 등록 장소들을 지도에 핀으로 올린다. 핀을 누르면 onSelect. 필터에 안 맞는 핀은 숨긴다.
 import { useEffect, useRef } from "react";
-import type { Place } from "@/data/places";
+import type { Place } from "@/types/place";
 import type { KakaoMap } from "@/lib/kakao/sdk";
 import { placePinElement } from "@/lib/kakao/overlays";
 import { matchesFilters, type Filters } from "@/lib/filters";

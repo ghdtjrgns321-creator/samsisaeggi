@@ -2,6 +2,8 @@
 import type { KakaoMap } from "./sdk";
 
 export const FOCUS_LEVEL = 3;
+/** 첫 화면 중심: 송도 센트럴파크 (등록 장소를 불러오면 그 장소들에 맞춰 다시 맞춤) */
+export const DEFAULT_CENTER = { lat: 37.3925, lng: 126.639 };
 /** 이 수준까지 확대해야 지도에 가게 이름이 보이므로, 지도 누르기 찾기도 이때만 */
 export const DETAIL_LEVEL = 4;
 

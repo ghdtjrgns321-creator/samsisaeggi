@@ -3,8 +3,7 @@
 // 지도를 누르면: 일단 onMiss(카드·목록 닫기) → 근처 장소가 1곳이면 onPick, 여러 곳이면 onCandidates.
 // 빠르게 여러 번 누르면 마지막으로 누른 곳의 결과만 반영한다.
 import { useRef } from "react";
-import type { Place } from "@/data/places";
-import type { PlaceSummary } from "@/types/place";
+import type { Place, PlaceSummary } from "@/types/place";
 import type { KakaoMap } from "@/lib/kakao/sdk";
 import { findPlacesAt } from "@/lib/kakao/nearbyPlace";
 import { withReviewCount } from "@/lib/search/rankResults";

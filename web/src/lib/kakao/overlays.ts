@@ -1,5 +1,5 @@
 // 지도 위에 올리는 DOM 요소들. 스타일은 globals.css의 .pin / .search-pin / .my-location-dot.
-import type { Place } from "@/data/places";
+import type { Place } from "@/types/place";
 
 function pin(className: string, label: string): HTMLElement {
   const el = document.createElement("div");
@@ -20,7 +20,7 @@ export function placePinLabel(place: Place): string {
 
 /** 삼시세끼 등록 장소 핀 (식당 검정 / 카페 갈색) */
 export function placePinElement(place: Place): HTMLElement {
-  return pin(`pin-${place.kind}`, placePinLabel(place));
+  return pin(place.groupCode === "CE7" ? "pin-cafe" : "pin-restaurant", placePinLabel(place));
 }
 
 /** 검색으로 고른 미등록 장소 임시 핀 */

@@ -1,8 +1,7 @@
 // 검색창 아래 빠른 태그 줄. 묶음마다 하나만 켤 수 있고, 묶음끼리는 함께 켜면 모두 만족하는 곳만 남는다.
 //  - 장소 종류(음식점·카페): Kakao 분류 코드로 거름 → 화면 안 장소를 말풍선으로 띄움
 //  - 시간대·용도·가격: 동료 리뷰에 적힌 값으로 거름 → 리뷰 있는 등록 장소만 해당
-import type { Place } from "@/data/places";
-import type { PlaceBase } from "@/types/place";
+import type { Place, PlaceBase } from "@/types/place";
 
 export type FilterOption = { value: string; label: string; emoji: string };
 

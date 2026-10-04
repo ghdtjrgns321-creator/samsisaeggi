@@ -1,11 +1,11 @@
 "use client";
 
 // 지도 홈 화면: 지도 + 상단 검색창 + 하단(내 위치 버튼·장소 카드·근처 목록)을 조립하고, 선택 상태를 관리.
+// 등록 장소는 DB에서 불러온다.
 import { useCallback, useMemo, useRef, useState } from "react";
-import type { Place } from "@/data/places";
-import type { PlaceSummary } from "@/types/place";
+import type { Place, PlaceSummary } from "@/types/place";
 import type { KakaoMap as KakaoMapInstance } from "@/lib/kakao/sdk";
-import { fitToPlaces, focusOn, panIntoView } from "@/lib/kakao/mapView";
+import { DEFAULT_CENTER, fitToPlaces, focusOn, panIntoView } from "@/lib/kakao/mapView";
 import { getLinkedPlaceId } from "@/lib/deepLink";
 import { EMPTY_FILTERS, FILTER_GROUPS, hasReviewFilter, matchesFilters, type Filters } from "@/lib/filters";
 import KakaoMap from "./map/KakaoMap";
@@ -21,10 +21,13 @@ import FilterChips from "./search/FilterChips";
 import SearchBar from "./search/SearchBar";
 import Toast from "./Toast";
 import { useElementHeight } from "@/hooks/useElementHeight";
+import { useRegisteredPlaces } from "@/hooks/useRegisteredPlaces";
+import { toPlaceStats } from "@/lib/placeStats";
 
 const TOAST_MS = 2000;
+const NO_PLACES: Place[] = [];
 
-export default function MapHome({ places }: { places: Place[] }) {
+export default function MapHome() {
   const mainRef = useRef<HTMLElement>(null);
   const mainHeight = useElementHeight(mainRef); // 장소 시트를 펼쳤을 때 높이
   const [map, setMap] = useState<KakaoMapInstance | null>(null);
@@ -41,16 +44,39 @@ export default function MapHome({ places }: { places: Place[] }) {
     toastTimerRef.current = setTimeout(() => setToast(null), TOAST_MS);
   }, []);
 
-  const handleMapReady = (m: KakaoMapInstance) => {
-    setMap(m);
-    // 공유 링크로 들어왔으면 그 장소를 바로 열고, 아니면 등록 장소 전체가 보이게
-    const linked = places.find((p) => p.id === getLinkedPlaceId());
+  // 첫 화면 맞추기: 지도와 등록 장소가 둘 다 준비되면 한 번만.
+  // 공유 링크로 들어왔으면 그 장소를 바로 열고, 아니면 등록 장소 전체가 보이게
+  const mapRef = useRef<KakaoMapInstance | null>(null);
+  const loadedRef = useRef<Place[] | null>(null);
+  const initializedRef = useRef(false);
+  const initView = useCallback(() => {
+    const m = mapRef.current;
+    const ps = loadedRef.current;
+    if (!m || !ps || initializedRef.current) return;
+    initializedRef.current = true;
+    const linked = ps.find((p) => p.id === getLinkedPlaceId());
     if (linked) {
       setSelected(linked);
       focusOn(m, linked.lat, linked.lng);
     } else {
-      fitToPlaces(m, places);
+      fitToPlaces(m, ps);
     }
+  }, []);
+
+  const handlePlacesLoaded = useCallback(
+    (ps: Place[]) => {
+      loadedRef.current = ps;
+      initView();
+    },
+    [initView],
+  );
+  const { places: loaded, reload: reloadPlaces } = useRegisteredPlaces(showToast, handlePlacesLoaded);
+  const places = loaded ?? NO_PLACES;
+
+  const handleMapReady = (m: KakaoMapInstance) => {
+    setMap(m);
+    mapRef.current = m;
+    initView();
   };
 
   // 핀을 누르면 카드를 띄우고, 핀이 카드에 가려질 때만 지도를 옮긴다
@@ -118,9 +144,12 @@ export default function MapHome({ places }: { places: Place[] }) {
     if (map) focusOn(map, result.lat, result.lng);
   };
 
+  // 선택한 장소가 등록 장소면 최신 집계(별점·요약)를 쓴다
+  const selectedPlace = selected ? places.find((p) => p.id === selected.id) : undefined;
+
   return (
     <main ref={mainRef} className="relative h-dvh overflow-hidden">
-      <KakaoMap initialCenter={places[0]} onReady={handleMapReady} />
+      <KakaoMap initialCenter={DEFAULT_CENTER} onReady={handleMapReady} />
       <SearchBar
         map={map}
         registered={places}
@@ -136,8 +165,16 @@ export default function MapHome({ places }: { places: Place[] }) {
         </div>
         {selected && (
           <div className="pointer-events-auto w-full">
-            {/* 리뷰 DB 연결 전이라 stats는 아직 없음. key: 다른 장소를 고르면 접힌 상태로 새로 시작 */}
-            <PlaceSheet key={selected.id} place={selected} stats={null} maxHeight={mainHeight} onToast={showToast} />
+            {/* key: 다른 장소를 고르면 접힌 상태로 새로 시작 */}
+            <PlaceSheet
+              key={selected.id}
+              place={selected}
+              registered={selectedPlace}
+              stats={selectedPlace ? toPlaceStats(selectedPlace) : null}
+              maxHeight={mainHeight}
+              onToast={showToast}
+              onChanged={reloadPlaces}
+            />
           </div>
         )}
         {candidates && (

@@ -4,8 +4,7 @@
 // 화면에서 겹치는 말풍선은 우선순위(results 순서)가 낮은 쪽을 숨기고, 지도를 움직일 때마다 다시 계산한다.
 // 등록 장소 핀은 항상 보이므로 자리만 차지하는 장애물로 취급한다.
 import { useEffect, useRef } from "react";
-import type { Place } from "@/data/places";
-import type { PlaceSummary } from "@/types/place";
+import type { Place, PlaceSummary } from "@/types/place";
 import type { KakaoMap } from "@/lib/kakao/sdk";
 import { placePinLabel, resultPinElement } from "@/lib/kakao/overlays";
 import { labelBox, pickVisible } from "@/lib/map/labelLayout";

@@ -17,11 +17,23 @@ export type PlaceSummary = PlaceBase & {
   reviewCount: number | null;
 };
 
-/** 리뷰를 모아 계산한 값 (리뷰 DB 연결 후 채움) */
+/** 삼시세끼 등록 장소 + 리뷰 집계 (DB place_stats 뷰 한 줄) */
+export type Place = PlaceBase & {
+  reviewCount: number;
+  rating: number | null; // 리뷰 없으면 null
+  mealTimes: string[]; // 리뷰에 나온 시간대 (중복 포함)
+  purposes: string[]; // 리뷰에 나온 용도 (중복 포함)
+  maxPeople: number | null;
+  pricePerPerson: number | null; // 1인 가격 중앙값
+  favoriteCount: number;
+  mainPhotoPath: string | null;
+};
+
+/** 카드에 보여줄 리뷰 요약 (리뷰가 1개 이상일 때만) */
 export type PlaceStats = {
   rating: number;
   reviewCount: number;
-  uses: string[];
-  maxPeople: number;
-  pricePerPerson: number;
+  uses: string[]; // 많이 나온 용도 순
+  maxPeople: number | null;
+  pricePerPerson: number | null;
 };

@@ -7,8 +7,7 @@
 // 결과 순서 = 먼저 찾은 것 우선, 같은 검색 안에서는 Kakao 정확도 순 → 말풍선 우선순위로 쓰인다.
 // 리뷰 있는 등록 장소는 이미 핀이 있으므로 결과에서 뺀다.
 import { useEffect, useRef, useState } from "react";
-import type { Place } from "@/data/places";
-import type { PlaceSummary } from "@/types/place";
+import type { Place, PlaceSummary } from "@/types/place";
 import type { KakaoMap } from "@/lib/kakao/sdk";
 import { categoryPlacesInView, searchPlacesInView } from "@/lib/kakao/placeSearch";
 import { matchesKind } from "@/lib/filters";

@@ -1,18 +1,14 @@
 "use client";
 
 // 장소 기본 정보: 종류 · 이름 · 별점 · 주소 · 요약 3칸 · 버튼 4개 (하단 시트의 맨 윗부분)
-import type { PlaceStats, PlaceSummary } from "@/types/place";
+import type { PlaceStats } from "@/types/place";
 import { isReviewable } from "@/lib/kakao/categories";
 import PlaceActions from "./PlaceActions";
 import PlaceStatsRow from "./PlaceStatsRow";
+import { usePlaceSheet } from "./PlaceSheetContext";
 
-type Props = {
-  place: PlaceSummary;
-  stats: PlaceStats | null; // null = 리뷰 없음
-  onToast: (msg: string) => void;
-};
-
-export default function PlaceInfo({ place, stats, onToast }: Props) {
+export default function PlaceInfo({ stats }: { stats: PlaceStats | null /* null = 리뷰 없음 */ }) {
+  const { place } = usePlaceSheet();
   const reviewable = isReviewable(place); // 음식점·카페만 별점·요약 표시
 
   return (
@@ -36,7 +32,7 @@ export default function PlaceInfo({ place, stats, onToast }: Props) {
       <div className="mt-4 space-y-3">
         {reviewable && <PlaceStatsRow stats={stats} />}
         {/* key: 다른 장소로 바뀌면 찜 상태를 새로 읽도록 다시 마운트 */}
-        <PlaceActions key={place.id} place={place} onToast={onToast} />
+        <PlaceActions key={place.id} />
       </div>
     </div>
   );
