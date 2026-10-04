@@ -15,13 +15,16 @@ import { useResultPins } from "./map/useResultPins";
 import { useSearchPin } from "./map/useSearchPin";
 import { useTapToPick } from "./map/useTapToPick";
 import NearbyList from "./place/NearbyList";
-import PlaceCard from "./place/PlaceCard";
+import PlaceSheet from "./place/PlaceSheet";
 import SearchBar from "./search/SearchBar";
 import Toast from "./Toast";
+import { useElementHeight } from "@/hooks/useElementHeight";
 
 const TOAST_MS = 2000;
 
 export default function MapHome({ places }: { places: Place[] }) {
+  const mainRef = useRef<HTMLElement>(null);
+  const mainHeight = useElementHeight(mainRef); // 장소 시트를 펼쳤을 때 높이
   const [map, setMap] = useState<KakaoMapInstance | null>(null);
   const [selected, setSelected] = useState<PlaceSummary | null>(null);
   const [candidates, setCandidates] = useState<PlaceSummary[] | null>(null);
@@ -98,7 +101,7 @@ export default function MapHome({ places }: { places: Place[] }) {
   };
 
   return (
-    <main className="relative h-dvh overflow-hidden">
+    <main ref={mainRef} className="relative h-dvh overflow-hidden">
       <KakaoMap initialCenter={places[0]} onReady={handleMapReady} />
       <SearchBar
         map={map}
@@ -114,8 +117,8 @@ export default function MapHome({ places }: { places: Place[] }) {
         </div>
         {selected && (
           <div className="pointer-events-auto w-full">
-            {/* 리뷰 DB 연결 전이라 stats는 아직 없음 */}
-            <PlaceCard place={selected} stats={null} onToast={showToast} />
+            {/* 리뷰 DB 연결 전이라 stats는 아직 없음. key: 다른 장소를 고르면 접힌 상태로 새로 시작 */}
+            <PlaceSheet key={selected.id} place={selected} stats={null} maxHeight={mainHeight} onToast={showToast} />
           </div>
         )}
         {candidates && (

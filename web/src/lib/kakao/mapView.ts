@@ -27,7 +27,7 @@ export function panTo(map: KakaoMap, lat: number, lng: number) {
   map.panTo(new maps.LatLng(lat, lng));
 }
 
-const CARD_COVER_RATIO = 0.45; // 하단 카드가 지도 아래쪽 약 45%를 가린다
+const CARD_COVER_RATIO = 0.5; // 하단 장소 시트(접힌 상태)가 지도 아래쪽 약 절반을 가린다
 
 /** 지점이 하단 카드에 가려지는 위치일 때만 화면 가운데로 옮긴다 */
 export function panIntoView(map: KakaoMap, lat: number, lng: number) {
