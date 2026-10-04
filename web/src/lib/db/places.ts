@@ -6,6 +6,7 @@ type PlaceStatsRow = {
   id: string;
   name: string;
   category: string;
+  category_path: string;
   group_code: string;
   address: string;
   phone: string;
@@ -27,6 +28,7 @@ function toPlace(row: PlaceStatsRow): Place {
     id: row.id,
     name: row.name,
     category: row.category,
+    categoryPath: row.category_path,
     groupCode: row.group_code,
     address: row.address,
     phone: row.phone,
@@ -57,6 +59,7 @@ export async function ensurePlaceRegistered(place: PlaceBase): Promise<void> {
       id: place.id,
       name: place.name,
       category: place.category,
+      category_path: place.categoryPath,
       group_code: place.groupCode,
       address: place.address,
       phone: place.phone,
