@@ -97,7 +97,7 @@ export default function SearchBar({ map, registered, onSelect, onSubmitSearch, o
             setOpen(true);
           }}
           onFocus={() => setOpen(true)}
-          placeholder="고객사·지역·식당명 검색"
+          placeholder="고객사·지역·메뉴 검색"
           className="min-w-0 flex-1 bg-transparent text-sm outline-none placeholder:text-gray [&::-webkit-search-cancel-button]:hidden"
         />
         {keyword && (
