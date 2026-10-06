@@ -86,7 +86,7 @@ export default function SearchBar({ map, registered, onSelect, onSubmitSearch, o
         }}
         className="flex h-12 items-center gap-2.5 px-3.5"
       >
-        <span className="shrink-0 font-bold text-primary">삼시세끼</span>
+        <span className="shrink-0 font-bold text-primary">삼일인 PICK!</span>
         <span className="h-4 w-px shrink-0 bg-line" />
         <input
           ref={inputRef}
@@ -97,7 +97,7 @@ export default function SearchBar({ map, registered, onSelect, onSubmitSearch, o
             setOpen(true);
           }}
           onFocus={() => setOpen(true)}
-          placeholder="식당 · 지역 · 고객사 검색"
+          placeholder="동료 추천 진짜 맛집 검색"
           className="min-w-0 flex-1 bg-transparent text-sm outline-none placeholder:text-gray [&::-webkit-search-cancel-button]:hidden"
         />
         {keyword && (

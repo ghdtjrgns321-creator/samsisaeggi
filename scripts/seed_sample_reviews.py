@@ -1,7 +1,7 @@
 """예시 리뷰 SQL 생성기.
 
 scripts/data/sample_reviews.json(가게별로 직접 쓴 예시 리뷰)을 supabase/seed/sample_reviews.sql 로 바꾼다.
-장소는 scripts/data/sample_places.json(Kakao에서 모은 송도 실제 장소) + DB에 이미 있는 송도 5곳. Supabase SQL Editor에서 실행.
+장소는 scripts/data/sample_places.json(Kakao에서 모은 송도·용산 실제 장소) + DB에 이미 있는 송도 5곳. Supabase SQL Editor에서 실행.
 
 - 리뷰는 가게 메뉴에 맞춰 손으로 쓴다. 별점과 내용이 맞아야 하고, 아쉬움은 웨이팅·소음·가격처럼 가벼운 것까지만
 - 화면 확인용으로 여러 경우를 섞는다: 리뷰 많은 곳/1개/0개, 선택 항목 있음/없음, 회식 대인원, 카페 작업 환경
@@ -70,10 +70,10 @@ def find_place(key: str, collected: list[dict]) -> tuple[str, str]:
     """(Kakao id, 분류 코드)"""
     if key in EXISTING:
         return EXISTING[key]
-    match = next((p for p in collected if key in p["name"]), None)
-    if match is None:
-        raise SystemExit(f"sample_places.json에 '{key}' 장소가 없어요")
-    return match["id"], match["group_code"]
+    matches = [p for p in collected if key in p["name"]]
+    if len(matches) != 1:
+        raise SystemExit(f"sample_places.json에 '{key}' 장소가 {len(matches)}곳이에요 (1곳이어야 함)")
+    return matches[0]["id"], matches[0]["group_code"]
 
 
 def check_review(key: str, group_code: str, r: dict) -> None:
@@ -132,7 +132,7 @@ def main() -> None:
 
     OUT_SQL.parent.mkdir(parents=True, exist_ok=True)
     OUT_SQL.write_text(
-        f"""-- 예시 리뷰 {len(review_rows)}개 + 송도 장소 {len(new_places)}곳 (scripts/seed_sample_reviews.py 로 생성, 직접 고치지 말 것)
+        f"""-- 예시 리뷰 {len(review_rows)}개 + 송도·용산 장소 {len(new_places)}곳 (scripts/seed_sample_reviews.py 로 생성, 직접 고치지 말 것)
 -- Supabase SQL Editor 에서 실행. 기존 예시 리뷰를 지우고 새로 넣는다 (사용자가 쓴 리뷰는 그대로).
 
 delete from public.reviews where is_sample;
