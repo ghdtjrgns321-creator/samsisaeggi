@@ -6,6 +6,8 @@ export const FOCUS_LEVEL = 3;
 export const DEFAULT_CENTER = { lat: 37.52879, lng: 126.96867 };
 /** 이 수준까지 확대해야 지도에 가게 이름이 보이므로, 지도 누르기 찾기도 이때만 */
 export const DETAIL_LEVEL = 4;
+/** 지역 검색 결과로 옮길 때: 동네 하나가 한 화면에 들어오는 수준 */
+export const REGION_LEVEL = 6;
 
 /** 한 지점으로 확대 이동 */
 export function focusOn(map: KakaoMap, lat: number, lng: number) {
