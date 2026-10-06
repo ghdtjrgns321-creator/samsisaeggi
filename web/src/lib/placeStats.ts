@@ -16,6 +16,7 @@ export function toPlaceStats(place: Place): PlaceStats | null {
     rating: place.rating,
     reviewCount: place.reviewCount,
     uses: byFrequency(place.purposes).slice(0, TOP_USES),
+    minPeople: place.minPeople,
     maxPeople: place.maxPeople,
     pricePerPerson: place.pricePerPerson,
   };
