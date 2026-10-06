@@ -2,7 +2,7 @@
 
 // 첫 화면 하단 목록 시트. 세 단계(min ↔ peek ↔ full)를 끌어서 오간다.
 //  - min(내림): 손잡이 + 제목 한 줄만. 지도를 넓게 볼 때
-//  - peek(접힘, 처음 상태): "송도2동 · 점심 7곳  랭킹순▾" + 목록 1.5줄(아래가 잘려 끌어올릴 수 있다는 표시)
+//  - peek(접힘, 처음 상태): "송도2동 · 점심 7곳  랭킹순▾ ⓘ" + 목록 1.5줄(아래가 잘려 끌어올릴 수 있다는 표시)
 //  - full(펼침): [지역 랭킹 | 내 찜 N] 탭. 검색창은 가리지 않도록 그 아래까지만 펼친다.
 // 손잡이·제목을 끌면 한 단계씩 오르내리고, 누르면 min·peek는 한 단계 위로, full은 peek로.
 // 목록 위에서도 위로 끌면 펼치고, 맨 위에서 아래로 끌면 내린다.
@@ -14,6 +14,7 @@ import { fetchMyFavorites, type MyFavorite } from "@/lib/db/favorites";
 import { useVerticalDrag } from "@/hooks/useVerticalDrag";
 import FavoritesTab from "./FavoritesTab";
 import PlaceListItem from "./PlaceListItem";
+import RankingInfo from "./RankingInfo";
 
 const MIN_HEIGHT = 56; // 손잡이 + 제목 한 줄
 const PEEK_HEIGHT = 210; // 손잡이 + 제목 + 목록 1.5줄
@@ -144,6 +145,7 @@ export default function PlaceListSheet({
               </option>
             ))}
           </select>
+          <RankingInfo />
         </div>
       )}
 
