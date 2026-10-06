@@ -1,16 +1,17 @@
-// 검색창 아래 필터 줄 (옆으로 넘김). 종류 칩 + 종류에 맞는 리뷰 태그 묶음마다 칩 하나, 누르면 아래로 펼쳐 하나를 고른다.
+// 검색창 아래 필터 줄 (옆으로 넘김). 종류 칩 + 종류에 맞는 리뷰 태그 묶음마다 칩 하나, 누르면 아래로 펼친다.
+// 종류는 하나 고르면 닫히고, 리뷰 태그는 여러 개를 켜고 끌 수 있게 열어 둔다.
 // 펼친 목록은 넘김 줄 밖에 띄운다 — 줄 안에 두면 overflow에 잘린다.
 import { useEffect, useRef, useState, type MouseEvent } from "react";
-import { KIND_GROUP, tagGroupsFor, withKind, type FilterGroup, type FilterKey, type FilterOption, type Filters } from "@/lib/filters";
+import { KIND_GROUP, pickedValues, tagGroupsFor, withKind, type FilterGroup, type FilterKey, type FilterOption, type Filters } from "@/lib/filters";
 
 type Open = { key: FilterKey; left: number };
 
 const PANEL_WIDTH = 132;
 export const MAP_TOP_COVER_PX = 112; // 검색창 + 필터 칩이 가리는 지도 위쪽 높이 (칩 top-[72px] + 칩 줄 높이)
 
-function GroupChip({ group, value, open, onClick }: { group: FilterGroup; value: string | null; open: boolean; onClick: (e: MouseEvent<HTMLButtonElement>) => void }) {
-  const picked = group.options.find((o) => o.value === value);
-  const shown = picked ?? group;
+function GroupChip({ group, values, open, onClick }: { group: FilterGroup; values: string[]; open: boolean; onClick: (e: MouseEvent<HTMLButtonElement>) => void }) {
+  const picked = group.options.filter((o) => values.includes(o.value));
+  const shown = picked[0] ?? group;
   return (
     <button
       type="button"
@@ -18,11 +19,12 @@ function GroupChip({ group, value, open, onClick }: { group: FilterGroup; value:
       aria-haspopup="listbox"
       aria-expanded={open}
       className={`flex shrink-0 items-center gap-1 rounded-full border px-3 py-[7px] text-[13px] font-medium whitespace-nowrap shadow-[0_1px_3px_rgba(0,0,0,0.06)] ${
-        picked ? "border-ink bg-ink text-white" : "border-line bg-white text-ink"
+        picked.length > 0 ? "border-ink bg-ink text-white" : "border-line bg-white text-ink"
       }`}
     >
       <span aria-hidden>{shown.emoji}</span>
       {shown.label}
+      {picked.length > 1 && <span>+{picked.length - 1}</span>}
       <span aria-hidden className={`text-[10px] transition-transform ${open ? "rotate-180" : ""}`}>
         ▾
       </span>
@@ -71,9 +73,16 @@ export default function FilterChips({ filters, onChange }: Props) {
     setOpen(open?.key === key ? null : { key, left });
   };
 
+  // value null = 전체(모두 끔)
   const pick = (key: FilterKey, value: string | null) => {
-    setOpen(null);
-    onChange(key === "kind" ? withKind(filters, value) : { ...filters, [key]: value });
+    if (key === "kind") {
+      setOpen(null);
+      onChange(withKind(filters, value));
+      return;
+    }
+    const on = filters[key];
+    const next = value === null ? [] : on.includes(value) ? on.filter((v) => v !== value) : [...on, value];
+    onChange({ ...filters, [key]: next });
   };
 
   const groups = [KIND_GROUP, ...tagGroupsFor(filters.kind)];
@@ -87,7 +96,7 @@ export default function FilterChips({ filters, onChange }: Props) {
           <GroupChip
             key={group.key}
             group={group}
-            value={filters[group.key]}
+            values={pickedValues(filters, group.key)}
             open={open?.key === group.key}
             onClick={(e) => toggle(group.key, e.currentTarget)}
           />
@@ -96,12 +105,13 @@ export default function FilterChips({ filters, onChange }: Props) {
       {open && openGroup && (
         <div
           role="listbox"
+          aria-multiselectable={open.key !== "kind"}
           style={{ left: open.left }}
           className="absolute top-full mt-1 w-[132px] overflow-hidden rounded-xl border border-line bg-white py-1 shadow-[0_4px_12px_rgba(0,0,0,0.12)]"
         >
-          <OptionRow option={{ label: "전체", emoji: "✨" }} active={filters[open.key] === null} onClick={() => pick(open.key, null)} />
+          <OptionRow option={{ label: "전체", emoji: "✨" }} active={pickedValues(filters, open.key).length === 0} onClick={() => pick(open.key, null)} />
           {openGroup.options.map((option) => (
-            <OptionRow key={option.value} option={option} active={filters[open.key] === option.value} onClick={() => pick(open.key, option.value)} />
+            <OptionRow key={option.value} option={option} active={pickedValues(filters, open.key).includes(option.value)} onClick={() => pick(open.key, option.value)} />
           ))}
         </div>
       )}

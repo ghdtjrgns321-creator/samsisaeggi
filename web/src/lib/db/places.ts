@@ -17,6 +17,7 @@ type PlaceStatsRow = {
   meal_times: string[];
   purposes: string[];
   work_envs: string[];
+  min_people: number | null; // 0008 이전 DB면 undefined
   max_people: number | null;
   price_per_person: number | null;
   favorite_count: number;
@@ -39,6 +40,7 @@ function toPlace(row: PlaceStatsRow): Place {
     mealTimes: row.meal_times,
     purposes: row.purposes,
     workEnvs: row.work_envs,
+    minPeople: row.min_people ?? null,
     maxPeople: row.max_people,
     pricePerPerson: row.price_per_person,
     favoriteCount: row.favorite_count,

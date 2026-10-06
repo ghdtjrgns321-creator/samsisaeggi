@@ -4,6 +4,7 @@
 import { useEffect, useState } from "react";
 import { fetchPhotos, type Photo } from "@/lib/db/photos";
 import PhotoTile from "./PhotoTile";
+import PhotoViewer from "./PhotoViewer";
 import { usePlaceSheet } from "./PlaceSheetContext";
 
 function CameraIcon() {
@@ -19,6 +20,7 @@ function CameraIcon() {
 export default function PlacePhotos({ version, onUpload }: { version: number; onUpload: () => void }) {
   const { place, onToast } = usePlaceSheet();
   const [photos, setPhotos] = useState<Photo[]>([]);
+  const [viewing, setViewing] = useState<number | null>(null); // 크게 보는 사진 순번
 
   useEffect(() => {
     fetchPhotos(place.id)
@@ -42,11 +44,11 @@ export default function PlacePhotos({ version, onUpload }: { version: number; on
       </div>
       {main ? (
         <div className="space-y-1">
-          <PhotoTile photo={main} className="aspect-[4/3] w-full rounded-xl" />
+          <PhotoTile photo={main} className="aspect-[4/3] w-full rounded-xl" onOpen={() => setViewing(0)} />
           {rest.length > 0 && (
             <div className="grid grid-cols-3 gap-1">
-              {rest.map((p) => (
-                <PhotoTile key={p.id} photo={p} className="aspect-square w-full rounded-lg" />
+              {rest.map((p, i) => (
+                <PhotoTile key={p.id} photo={p} className="aspect-square w-full rounded-lg" onOpen={() => setViewing(i + 1)} />
               ))}
             </div>
           )}
@@ -63,6 +65,7 @@ export default function PlacePhotos({ version, onUpload }: { version: number; on
           <span className="rounded-full bg-primary px-3 py-1 text-xs font-bold text-white">+ 올리기</span>
         </button>
       )}
+      {viewing !== null && <PhotoViewer photos={photos} start={viewing} onClose={() => setViewing(null)} />}
     </section>
   );
 }

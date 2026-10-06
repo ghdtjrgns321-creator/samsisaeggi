@@ -25,6 +25,7 @@ export type Place = PlaceBase & {
   mealTimes: string[]; // 리뷰에 나온 시간대 (중복 포함)
   purposes: string[]; // 리뷰에 나온 용도 (중복 포함)
   workEnvs: string[]; // 리뷰에 나온 카페 작업 환경 (중복 포함)
+  minPeople: number | null; // 다녀간 인원 (리뷰에 적힌 최소~최대)
   maxPeople: number | null;
   pricePerPerson: number | null; // 1인 가격 중앙값
   favoriteCount: number;
@@ -36,6 +37,7 @@ export type PlaceStats = {
   rating: number;
   reviewCount: number;
   uses: string[]; // 많이 나온 용도 순
+  minPeople: number | null; // 다녀간 인원 (리뷰에 적힌 최소~최대)
   maxPeople: number | null;
   pricePerPerson: number | null;
 };

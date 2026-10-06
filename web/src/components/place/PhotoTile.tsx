@@ -1,9 +1,9 @@
 // 사진 한 장. 예시 사진은 "예시 사진" 표시 + 출처(작성자·라이선스)를 사진 위에 작게 붙인다 (CC BY 계열은 출처 필수)
 import type { Photo } from "@/lib/db/photos";
 
-export default function PhotoTile({ photo, className }: { photo: Photo; className: string }) {
+export default function PhotoTile({ photo, className, onOpen }: { photo: Photo; className: string; onOpen: () => void }) {
   return (
-    <div className={`relative overflow-hidden ${className}`}>
+    <button type="button" onClick={onOpen} aria-label="사진 크게 보기" className={`relative block overflow-hidden ${className}`}>
       {/* eslint-disable-next-line @next/next/no-img-element -- 외부 저장소·자유 이용 사진 URL */}
       <img src={photo.url} alt="" loading="lazy" className="h-full w-full object-cover" />
       {photo.isSample && (
@@ -14,6 +14,6 @@ export default function PhotoTile({ photo, className }: { photo: Photo; classNam
           {photo.credit}
         </span>
       )}
-    </div>
+    </button>
   );
 }
