@@ -2,19 +2,10 @@
 import type { KakaoMap } from "./sdk";
 
 export const FOCUS_LEVEL = 3;
-/** 첫 화면 중심: 송도 센트럴파크 (등록 장소를 불러오면 그 장소들에 맞춰 다시 맞춤) */
-export const DEFAULT_CENTER = { lat: 37.3925, lng: 126.639 };
+/** 첫 화면 중심: 삼일회계법인 (용산 아모레퍼시픽 사옥, 한강대로 100) */
+export const DEFAULT_CENTER = { lat: 37.52879, lng: 126.96867 };
 /** 이 수준까지 확대해야 지도에 가게 이름이 보이므로, 지도 누르기 찾기도 이때만 */
 export const DETAIL_LEVEL = 4;
-
-/** 장소들이 한 화면에 모두 보이게 맞춘다 */
-export function fitToPlaces(map: KakaoMap, places: { lat: number; lng: number }[]) {
-  if (places.length === 0) return;
-  const { maps } = window.kakao;
-  const bounds = new maps.LatLngBounds();
-  places.forEach((p) => bounds.extend(new maps.LatLng(p.lat, p.lng)));
-  map.setBounds(bounds);
-}
 
 /** 한 지점으로 확대 이동 */
 export function focusOn(map: KakaoMap, lat: number, lng: number) {

@@ -5,7 +5,7 @@
 import { useCallback, useMemo, useRef, useState } from "react";
 import type { Place, PlaceSummary } from "@/types/place";
 import type { KakaoMap as KakaoMapInstance } from "@/lib/kakao/sdk";
-import { DEFAULT_CENTER, fitToPlaces, focusOn, panIntoView, panTo } from "@/lib/kakao/mapView";
+import { DEFAULT_CENTER, focusOn, panIntoView, panTo } from "@/lib/kakao/mapView";
 import { getLinkedPlaceId } from "@/lib/deepLink";
 import { EMPTY_FILTERS, filtersSummary, hasReviewFilter, matchesFilters, matchesKind, type Filters } from "@/lib/filters";
 import type { LatLng } from "@/lib/geolocation";
@@ -52,7 +52,7 @@ export default function MapHome() {
   }, []);
 
   // 첫 화면 맞추기: 지도와 등록 장소가 둘 다 준비되면 한 번만.
-  // 공유 링크로 들어왔으면 그 장소를 바로 열고, 아니면 등록 장소 전체가 보이게
+  // 공유 링크로 들어왔으면 그 장소를 바로 열고, 아니면 첫 화면 중심(삼일 사옥) 그대로
   const mapRef = useRef<KakaoMapInstance | null>(null);
   const loadedRef = useRef<Place[] | null>(null);
   const initializedRef = useRef(false);
@@ -65,8 +65,6 @@ export default function MapHome() {
     if (linked) {
       setSelected(linked);
       focusOn(m, linked.lat, linked.lng);
-    } else {
-      fitToPlaces(m, ps);
     }
   }, []);
 
