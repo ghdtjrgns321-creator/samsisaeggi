@@ -5,7 +5,8 @@
 import { useCallback, useMemo, useRef, useState } from "react";
 import type { Place, PlaceSummary } from "@/types/place";
 import type { KakaoMap as KakaoMapInstance } from "@/lib/kakao/sdk";
-import { DEFAULT_CENTER, focusOn, panIntoView, panTo } from "@/lib/kakao/mapView";
+import { DEFAULT_CENTER, focusOn, panIntoView, panTo, REGION_LEVEL } from "@/lib/kakao/mapView";
+import type { RegionResult } from "@/lib/kakao/regionSearch";
 import { getLinkedPlaceId } from "@/lib/deepLink";
 import { EMPTY_FILTERS, filtersSummary, hasReviewFilter, matchesFilters, matchesKind, type Filters } from "@/lib/filters";
 import type { LatLng } from "@/lib/geolocation";
@@ -186,6 +187,14 @@ export default function MapHome() {
     if (map) focusOn(map, result.lat, result.lng);
   };
 
+  // 지역 결과 선택 → 카드 없이 그 동네가 한 화면에 보이게 이동만
+  const handleRegionSelect = (region: RegionResult) => {
+    closeAll();
+    if (!map) return;
+    map.setLevel(REGION_LEVEL);
+    panTo(map, region.lat, region.lng);
+  };
+
   // 목록에서 고름: 내 찜은 화면 밖일 수 있으니 항상 그 장소로 옮기고, 핀이 없는 곳(리뷰 0개)은 임시 핀
   const handleListSelect = (place: Place) => {
     setListLevel("peek"); // 카드를 닫고 돌아오면 목록은 접힌 상태로 다시 나타남
@@ -204,6 +213,7 @@ export default function MapHome() {
         map={map}
         registered={places}
         onSelect={handleSearchSelect}
+        onSelectRegion={handleRegionSelect}
         onSubmitSearch={handleSubmitSearch}
         onClear={() => setAreaKeyword(null)}
       />

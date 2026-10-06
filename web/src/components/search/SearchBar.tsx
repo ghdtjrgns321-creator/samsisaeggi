@@ -1,12 +1,13 @@
 "use client";
 
-// 상단 검색창: 입력하면 잠시 뒤 자동 검색 → 정렬 → 결과 목록. 고른 결과는 onSelect로 넘긴다.
+// 상단 검색창: 입력하면 잠시 뒤 지역·장소를 함께 검색 → 정렬 → 결과 목록. 고른 장소는 onSelect, 고른 지역은 onSelectRegion으로 넘긴다.
 // 엔터를 누르면 목록을 닫고 onSubmitSearch(지도 화면 안 결과를 핀으로), ✕를 누르면 onClear.
 // 검색창 밖을 누르면 목록을 닫고, 다시 입력창을 누르면 직전 결과를 다시 연다.
 import { useCallback, useEffect, useRef, useState } from "react";
 import type { Place, PlaceSummary } from "@/types/place";
 import type { KakaoMap } from "@/lib/kakao/sdk";
 import { searchPlaces } from "@/lib/kakao/placeSearch";
+import { searchRegions, type RegionResult } from "@/lib/kakao/regionSearch";
 import { rankResults } from "@/lib/search/rankResults";
 import { useDebouncedValue } from "@/hooks/useDebouncedValue";
 import { useClickOutside } from "@/hooks/useClickOutside";
@@ -14,20 +15,23 @@ import SearchResultList from "./SearchResultList";
 
 const SEARCH_DELAY_MS = 300;
 
+type Results = { query: string; regions: RegionResult[]; items: PlaceSummary[] }; // query: 이 결과를 만든 검색어 ("" = 아직 결과 없음)
+const NO_RESULTS: Results = { query: "", regions: [], items: [] };
+
 type Props = {
   map: KakaoMap | null;
   registered: Place[];
   onSelect: (result: PlaceSummary) => void;
+  onSelectRegion: (region: RegionResult) => void;
   onSubmitSearch: (keyword: string) => void;
   onClear: () => void;
 };
 
-export default function SearchBar({ map, registered, onSelect, onSubmitSearch, onClear }: Props) {
+export default function SearchBar({ map, registered, onSelect, onSelectRegion, onSubmitSearch, onClear }: Props) {
   const containerRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const [keyword, setKeyword] = useState("");
-  // query: 이 결과를 만든 검색어 ("" = 아직 결과 없음)
-  const [results, setResults] = useState<{ query: string; items: PlaceSummary[] }>({ query: "", items: [] });
+  const [results, setResults] = useState<Results>(NO_RESULTS);
   const [error, setError] = useState<string | null>(null);
   const [open, setOpen] = useState(false);
 
@@ -36,10 +40,10 @@ export default function SearchBar({ map, registered, onSelect, onSubmitSearch, o
   useEffect(() => {
     if (!map || !query) return;
     let stale = false; // 늦게 도착한 이전 검색 응답은 버린다
-    searchPlaces(query, map)
-      .then((found) => {
+    Promise.all([searchRegions(query), searchPlaces(query, map)])
+      .then(([regions, found]) => {
         if (stale) return;
-        setResults({ query, items: rankResults(found, registered) });
+        setResults({ query, regions, items: rankResults(found, registered) });
         setError(null);
       })
       .catch((err: Error) => {
@@ -58,14 +62,18 @@ export default function SearchBar({ map, registered, onSelect, onSubmitSearch, o
   useClickOutside(containerRef, close);
 
   const handleSelect = (result: PlaceSummary) => {
-    setOpen(false);
-    inputRef.current?.blur();
+    close();
     onSelect(result);
+  };
+
+  const handleSelectRegion = (region: RegionResult) => {
+    close();
+    onSelectRegion(region);
   };
 
   const clear = () => {
     setKeyword("");
-    setResults({ query: "", items: [] });
+    setResults(NO_RESULTS);
     setError(null);
     onClear();
     inputRef.current?.focus();
@@ -115,7 +123,12 @@ export default function SearchBar({ map, registered, onSelect, onSubmitSearch, o
       {open && error && <p className="border-t border-line px-4 py-3 text-sm text-primary">{error}</p>}
       {showList && !error && (
         <div className="border-t border-line">
-          <SearchResultList results={results.items} onSelect={handleSelect} />
+          <SearchResultList
+            regions={results.regions}
+            results={results.items}
+            onSelect={handleSelect}
+            onSelectRegion={handleSelectRegion}
+          />
         </div>
       )}
     </div>
