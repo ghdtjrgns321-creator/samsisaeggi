@@ -1,4 +1,4 @@
--- 예시 사진 30장 + 예시 찜 수 (scripts/seed_sample_extras.py 로 생성, 직접 고치지 말 것)
+-- 예시 사진 75장 + 예시 찜 수 (scripts/seed_sample_extras.py 로 생성, 직접 고치지 말 것)
 -- 0006 마이그레이션과 sample_reviews.sql 다음에 실행 (예시 리뷰에 붙임). 다시 실행해도 예시 사진은 지우고 새로 넣는다. 지우기: 맨 아래 주석.
 
 delete from public.photos where is_sample;
@@ -33,7 +33,53 @@ insert into public.photos (place_id, review_id, user_id, path, is_sample, credit
   ('1840452915', (select id from public.reviews where place_id = '1840452915' and is_sample and comment = '브런치 메뉴 있어 점심 겸 미팅하기 좋아요'), null, 'https://thumb.wikimedia.org/wikipedia/commons/thumb/f/f3/Eggs_Benedict_%28Unsplash%29.jpg/960px-Eggs_Benedict_%28Unsplash%29.jpg', true, 'Constance Chen theskyandthesea · CC0', '2026-08-06T12:00:00+00:00'),
   ('604749104', (select id from public.reviews where place_id = '604749104' and is_sample and comment = '책장 둘러싸인 자리라 집중 잘 돼요'), null, 'https://thumb.wikimedia.org/wikipedia/commons/thumb/d/d6/Cappuccino_with_latte_art_on_Coffee_Right_in_Brno%2C_Brno-City_District.jpg/960px-Cappuccino_with_latte_art_on_Coffee_Right_in_Brno%2C_Brno-City_District.jpg', true, 'Frettie · CC BY 3.0', '2026-08-05T12:00:00+00:00'),
   ('604749104', (select id from public.reviews where place_id = '604749104' and is_sample and comment = '책장 둘러싸인 자리라 집중 잘 돼요'), null, 'https://thumb.wikimedia.org/wikipedia/commons/thumb/0/06/Latte_art.jpg/960px-Latte_art.jpg', true, 'Mortefot from Flickr · CC BY-SA 2.0', '2026-08-06T12:00:00+00:00'),
-  ('604749104', (select id from public.reviews where place_id = '604749104' and is_sample and comment = '창가 콘센트 자리는 금방 차요. 오전 추천'), null, 'https://upload.wikimedia.org/wikipedia/commons/8/8a/Latte_art_.jpg', true, 'BeccaMatthews · CC BY-SA 4.0', '2026-08-07T12:00:00+00:00');
+  ('604749104', (select id from public.reviews where place_id = '604749104' and is_sample and comment = '창가 콘센트 자리는 금방 차요. 오전 추천'), null, 'https://upload.wikimedia.org/wikipedia/commons/8/8a/Latte_art_.jpg', true, 'BeccaMatthews · CC BY-SA 4.0', '2026-08-07T12:00:00+00:00'),
+  ('432101389', (select id from public.reviews where place_id = '432101389' and is_sample and comment = '흑돼지 모둠 500g, 직원분이 다 구워줘요'), null, 'https://thumb.wikimedia.org/wikipedia/commons/thumb/f/fe/Samgyeopsal_table.jpg/960px-Samgyeopsal_table.jpg', true, '이동원 · CC0', '2026-08-05T12:00:00+00:00'),
+  ('432101389', (select id from public.reviews where place_id = '432101389' and is_sample and comment = '흑돼지 모둠 500g, 직원분이 다 구워줘요'), null, 'https://thumb.wikimedia.org/wikipedia/commons/thumb/7/77/Samgyeopsal-gui.jpg/960px-Samgyeopsal-gui.jpg', true, 'jinsoo jang · CC0', '2026-08-06T12:00:00+00:00'),
+  ('19041798', (select id from public.reviews where place_id = '19041798' and is_sample and comment = '김치돈가츠나베 하나면 점심 끝, 국물 리필'), null, 'https://thumb.wikimedia.org/wikipedia/commons/thumb/9/98/Tonkatsu_003.jpg/960px-Tonkatsu_003.jpg', true, 'Ocdp · CC0', '2026-08-05T12:00:00+00:00'),
+  ('19041798', (select id from public.reviews where place_id = '19041798' and is_sample and comment = '김치돈가츠나베 하나면 점심 끝, 국물 리필'), null, 'https://upload.wikimedia.org/wikipedia/commons/e/e9/Japanese_set_meal_with_tonkatsu.jpg', true, 'Betsylavolette · CC BY-SA 4.0', '2026-08-06T12:00:00+00:00'),
+  ('1813473', (select id from public.reviews where place_id = '1813473' and is_sample and comment = '네타 두툼하고 서비스 우동까지 나와요'), null, 'https://thumb.wikimedia.org/wikipedia/commons/thumb/a/af/Nigiri_Sushi_%2826505096851%29.jpg/960px-Nigiri_Sushi_%2826505096851%29.jpg', true, 'Tim Reckmann from Hamm, Deutschland · CC BY 2.0', '2026-08-05T12:00:00+00:00'),
+  ('1813473', (select id from public.reviews where place_id = '1813473' and is_sample and comment = '네타 두툼하고 서비스 우동까지 나와요'), null, 'https://thumb.wikimedia.org/wikipedia/commons/thumb/e/e8/Tuna_nigiri_sushi_-_Sushiko_%282648979899%29.jpg/960px-Tuna_nigiri_sushi_-_Sushiko_%282648979899%29.jpg', true, 'Alpha from Melbourne, Australia · CC BY-SA 2.0', '2026-08-06T12:00:00+00:00'),
+  ('1729633606', (select id from public.reviews where place_id = '1729633606' and is_sample and comment = '레몬 파스타가 시그니처, 상큼하고 맛있어요'), null, 'https://thumb.wikimedia.org/wikipedia/commons/thumb/9/9e/Pasta_Carbonara_at_restaurant_Vltava.jpg/960px-Pasta_Carbonara_at_restaurant_Vltava.jpg', true, 'JIP · CC BY-SA 4.0', '2026-08-05T12:00:00+00:00'),
+  ('1729633606', (select id from public.reviews where place_id = '1729633606' and is_sample and comment = '레몬 파스타가 시그니처, 상큼하고 맛있어요'), null, 'https://thumb.wikimedia.org/wikipedia/commons/thumb/9/93/Shellfish_pasta_at_restaurant_2H%2BK.jpg/960px-Shellfish_pasta_at_restaurant_2H%2BK.jpg', true, 'JIP · CC BY-SA 4.0', '2026-08-06T12:00:00+00:00'),
+  ('11162581', (select id from public.reviews where place_id = '11162581' and is_sample and comment = '김치가 맛있는 노포, 감자전도 꼭'), null, 'https://thumb.wikimedia.org/wikipedia/commons/thumb/b/b8/Korean.noodle-Kalguksu-01.jpg/960px-Korean.noodle-Kalguksu-01.jpg', true, 'by jslander · CC BY 2.0', '2026-08-05T12:00:00+00:00'),
+  ('2118107039', (select id from public.reviews where place_id = '2118107039' and is_sample and comment = '신용산역 출구 바로 앞, 아침 7시 오픈'), null, 'https://thumb.wikimedia.org/wikipedia/commons/thumb/7/76/Cup_of_coffee_with_latte_art_2016.jpg/960px-Cup_of_coffee_with_latte_art_2016.jpg', true, 'Abdulrohmatt · CC BY-SA 4.0', '2026-08-05T12:00:00+00:00'),
+  ('466110144', (select id from public.reviews where place_id = '466110144' and is_sample and comment = '밀도 식빵 고소하고 부드러워요. 팀 간식'), null, 'https://thumb.wikimedia.org/wikipedia/commons/thumb/6/6d/Cream_bread_2.jpg/960px-Cream_bread_2.jpg', true, '최손 · CC BY 2.0 kr', '2026-08-05T12:00:00+00:00'),
+  ('971544748', (select id from public.reviews where place_id = '971544748' and is_sample and comment = '회식 다음 날 해장은 순두부육개장'), null, 'https://thumb.wikimedia.org/wikipedia/commons/thumb/9/9c/Korean.cuisine-Yukgaejang-01.jpg/960px-Korean.cuisine-Yukgaejang-01.jpg', true, 'by LWY at flickr · CC BY 2.0', '2026-08-05T12:00:00+00:00'),
+  ('971544748', (select id from public.reviews where place_id = '971544748' and is_sample and comment = '회식 다음 날 해장은 순두부육개장'), null, 'https://upload.wikimedia.org/wikipedia/commons/a/a2/Korean_soup-Yukgaejang-01.jpg', true, 'live · CC BY 2.0', '2026-08-06T12:00:00+00:00'),
+  ('185719220', (select id from public.reviews where place_id = '185719220' and is_sample and comment = '룸 많아서 부서 회식 잡기 좋아요'), null, 'https://thumb.wikimedia.org/wikipedia/commons/thumb/b/b1/Tangsuyuk.jpg/960px-Tangsuyuk.jpg', true, '최광모 · CC0', '2026-08-05T12:00:00+00:00'),
+  ('185719220', (select id from public.reviews where place_id = '185719220' and is_sample and comment = '룸 많아서 부서 회식 잡기 좋아요'), null, 'https://thumb.wikimedia.org/wikipedia/commons/thumb/b/ba/Tangsuyuk_2.jpg/960px-Tangsuyuk_2.jpg', true, 'Jens Ohlig · CC BY-SA 2.0', '2026-08-06T12:00:00+00:00'),
+  ('283930207', (select id from public.reviews where place_id = '283930207' and is_sample and comment = '효뜨 볶음밥은 꼭 시키세요. 시그니처'), null, 'https://thumb.wikimedia.org/wikipedia/commons/thumb/5/56/Bun_cha_Hanoi.jpg/960px-Bun_cha_Hanoi.jpg', true, 'Weetjesman · CC BY-SA 4.0', '2026-08-05T12:00:00+00:00'),
+  ('283930207', (select id from public.reviews where place_id = '283930207' and is_sample and comment = '효뜨 볶음밥은 꼭 시키세요. 시그니처'), null, 'https://thumb.wikimedia.org/wikipedia/commons/thumb/7/7f/Bun-cha-hanoi.jpg/960px-Bun-cha-hanoi.jpg', true, 'Valentin Orange · CC BY-SA 4.0', '2026-08-06T12:00:00+00:00'),
+  ('773394734', (select id from public.reviews where place_id = '773394734' and is_sample and comment = '평양냉면 입문용으로 딱, 슴슴하고 깔끔'), null, 'https://thumb.wikimedia.org/wikipedia/commons/thumb/6/62/Pyongyang_Naengmyeon_20190608_001.jpg/960px-Pyongyang_Naengmyeon_20190608_001.jpg', true, 'Mobius6 · CC BY-SA 4.0', '2026-08-05T12:00:00+00:00'),
+  ('773394734', (select id from public.reviews where place_id = '773394734' and is_sample and comment = '평양냉면 입문용으로 딱, 슴슴하고 깔끔'), null, 'https://thumb.wikimedia.org/wikipedia/commons/thumb/5/5d/Pyongyang_Naengmyeon_20190608_002.jpg/960px-Pyongyang_Naengmyeon_20190608_002.jpg', true, 'Mobius6 · CC BY-SA 4.0', '2026-08-06T12:00:00+00:00'),
+  ('596181447', (select id from public.reviews where place_id = '596181447' and is_sample and comment = '미나리 곰탕 국물 맑고 향이 산뜻해요'), null, 'https://thumb.wikimedia.org/wikipedia/commons/thumb/a/a5/Gomtang.jpg/960px-Gomtang.jpg', true, 'chomjong · CC BY 2.0', '2026-08-05T12:00:00+00:00'),
+  ('172187463', (select id from public.reviews where place_id = '172187463' and is_sample and comment = '잘게 썬 촙 샐러드라 한 숟가락에 다 들어감'), null, 'https://thumb.wikimedia.org/wikipedia/commons/thumb/f/fb/Chicken_breast_and_salad_-_Massachusetts.jpg/960px-Chicken_breast_and_salad_-_Massachusetts.jpg', true, 'Daderot · CC0', '2026-08-05T12:00:00+00:00'),
+  ('380740588', (select id from public.reviews where place_id = '380740588' and is_sample and comment = '모츠나베에 꼬치, 회식 2차로 좋아요'), null, 'https://thumb.wikimedia.org/wikipedia/commons/thumb/e/e0/Yakitori_-_Tora.jpg/960px-Yakitori_-_Tora.jpg', true, 'Francesc Fort · CC BY-SA 4.0', '2026-08-05T12:00:00+00:00'),
+  ('1836394026', (select id from public.reviews where place_id = '1836394026' and is_sample and comment = '속 꽉 찬 김밥, 마감 야근 때 포장해요'), null, 'https://thumb.wikimedia.org/wikipedia/commons/thumb/0/0e/Gimbap_%28pixabay%29.jpg/960px-Gimbap_%28pixabay%29.jpg', true, 'changupn · CC0', '2026-08-05T12:00:00+00:00'),
+  ('1152103185', (select id from public.reviews where place_id = '1152103185' and is_sample and comment = '티코스가 호텔 애프터눈 티급, 접대 추천'), null, 'https://thumb.wikimedia.org/wikipedia/commons/thumb/c/c9/Green_tea_roll_cake.jpg/960px-Green_tea_roll_cake.jpg', true, 'Wei-Te Wong · CC BY-SA 2.0', '2026-08-05T12:00:00+00:00'),
+  ('1152103185', (select id from public.reviews where place_id = '1152103185' and is_sample and comment = '티코스가 호텔 애프터눈 티급, 접대 추천'), null, 'https://thumb.wikimedia.org/wikipedia/commons/thumb/c/c5/Green_tea_ice_cream_and_tea_roll_cakes.jpg/960px-Green_tea_ice_cream_and_tea_roll_cakes.jpg', true, 'Norton Ip · CC BY-SA 2.0', '2026-08-06T12:00:00+00:00'),
+  ('1607376461', (select id from public.reviews where place_id = '1607376461' and is_sample and comment = '네모난 휘낭시에 겉바속쫀, 루프탑 좋아요'), null, 'https://thumb.wikimedia.org/wikipedia/commons/thumb/a/a8/Boheminium_Park_cafe_display_case_cakes_and_snacks.jpg/960px-Boheminium_Park_cafe_display_case_cakes_and_snacks.jpg', true, 'Steffen Mokosch · CC BY-SA 4.0', '2026-08-05T12:00:00+00:00'),
+  ('333701856', (select id from public.reviews where place_id = '333701856' and is_sample and comment = '출근길 소금빵 맛집, 오후엔 거의 품절'), null, 'https://thumb.wikimedia.org/wikipedia/commons/thumb/e/ed/Salt_bread_%28sold_at_supermarkets_in_Otaru%29.jpg/960px-Salt_bread_%28sold_at_supermarkets_in_Otaru%29.jpg', true, 'User:逃亡者 (ja:利用者:逃亡者) · Public domain', '2026-08-05T12:00:00+00:00'),
+  ('10693894', (select id from public.reviews where place_id = '10693894' and is_sample and comment = '70년대부터 한 노포, 맑은탕 해장 최고'), null, 'https://upload.wikimedia.org/wikipedia/commons/a/ab/Daegu-tang_1.jpg', true, '대경라이프 · CC BY-SA 4.0', '2026-08-05T12:00:00+00:00'),
+  ('10693894', (select id from public.reviews where place_id = '10693894' and is_sample and comment = '70년대부터 한 노포, 맑은탕 해장 최고'), null, 'https://upload.wikimedia.org/wikipedia/commons/d/d5/Daegu-tang_2.jpg', true, '대경라이프 · CC BY-SA 4.0', '2026-08-06T12:00:00+00:00'),
+  ('24188406', (select id from public.reviews where place_id = '24188406' and is_sample and comment = '대파 가득 육칼, 면 바로 삶아 쫄깃해요'), null, 'https://thumb.wikimedia.org/wikipedia/commons/thumb/7/7e/Korean.cuisine-Yukgaejang-02.jpg/960px-Korean.cuisine-Yukgaejang-02.jpg', true, 'by avlxyz · CC BY-SA 2.0', '2026-08-05T12:00:00+00:00'),
+  ('12700169', (select id from public.reviews where place_id = '12700169' and is_sample and comment = '연탄불 특수부위에 계란후라이, 회식 단골'), null, 'https://thumb.wikimedia.org/wikipedia/commons/thumb/6/65/Samgyeopsal_2.jpg/960px-Samgyeopsal_2.jpg', true, 'ProjectManhattan · CC BY-SA 3.0', '2026-08-05T12:00:00+00:00'),
+  ('27209120', (select id from public.reviews where place_id = '27209120' and is_sample and comment = '새우만두 최고, 빕구르망 클래스'), null, 'https://thumb.wikimedia.org/wikipedia/commons/thumb/1/1a/Pan_dumplings.jpg/960px-Pan_dumplings.jpg', true, 'SarKaLay စာကလေး · CC BY-SA 4.0', '2026-08-05T12:00:00+00:00'),
+  ('20524244', (select id from public.reviews where place_id = '20524244' and is_sample and comment = '점심 칼국수 9천원, 남영역 앞 가성비'), null, 'https://thumb.wikimedia.org/wikipedia/commons/thumb/c/c1/Dak-han-mari_1.jpg/960px-Dak-han-mari_1.jpg', true, 'bryan... · CC BY-SA 2.0', '2026-08-05T12:00:00+00:00'),
+  ('21393229', (select id from public.reviews where place_id = '21393229' and is_sample and comment = '튀김옷 가볍고 히레가 부드러운 정통 돈카츠'), null, 'https://thumb.wikimedia.org/wikipedia/commons/thumb/9/99/Tonkatsu_004.jpg/960px-Tonkatsu_004.jpg', true, 'Ocdp · CC0', '2026-08-05T12:00:00+00:00'),
+  ('18443799', (select id from public.reviews where place_id = '18443799' and is_sample and comment = '런치 오마카세 양 많고 사시미 두툼해요'), null, 'https://thumb.wikimedia.org/wikipedia/commons/thumb/b/b9/Nigiri_Sushi_%2826571110455%29.jpg/960px-Nigiri_Sushi_%2826571110455%29.jpg', true, 'Tim Reckmann from Hamm, Deutschland · CC BY 2.0', '2026-08-05T12:00:00+00:00'),
+  ('1851189141', (select id from public.reviews where place_id = '1851189141' and is_sample and comment = '박물관 연못 뷰, 유리벽 룸에 단체도 가능'), null, 'https://thumb.wikimedia.org/wikipedia/commons/thumb/c/c0/Pasta_bolognese_at_restaurant_Vltava.jpg/960px-Pasta_bolognese_at_restaurant_Vltava.jpg', true, 'JIP · CC BY-SA 4.0', '2026-08-05T12:00:00+00:00'),
+  ('16794177', (select id from public.reviews where place_id = '16794177' and is_sample and comment = '갈레트·아몬드크루아상 뭘 골라도 맛있음'), null, 'https://thumb.wikimedia.org/wikipedia/commons/thumb/9/90/Le_Croissant_French_Bakery_-_November_2023_-_Sarah_Stierch_01.jpg/960px-Le_Croissant_French_Bakery_-_November_2023_-_Sarah_Stierch_01.jpg', true, 'Missvain · CC BY 4.0', '2026-08-05T12:00:00+00:00'),
+  ('1561286469', (select id from public.reviews where place_id = '1561286469' and is_sample and comment = '한강대교 위 통창 뷰, 해 질 녘이 예뻐요'), null, 'https://thumb.wikimedia.org/wikipedia/commons/thumb/e/e4/Latte_and_dark_coffee.jpg/960px-Latte_and_dark_coffee.jpg', true, 'Bex Walton · CC BY 2.0', '2026-08-05T12:00:00+00:00'),
+  ('9921124', (select id from public.reviews where place_id = '9921124' and is_sample and comment = '들깨 없이 맑은 감자탕, 노포 소주 안주로 딱'), null, 'https://thumb.wikimedia.org/wikipedia/commons/thumb/7/7e/Korean.food-Gamjatang-01.jpg/960px-Korean.food-Gamjatang-01.jpg', true, 'comicpie (a flickr user) · CC BY 2.0', '2026-08-05T12:00:00+00:00'),
+  ('721715250', (select id from public.reviews where place_id = '721715250' and is_sample and comment = '바닥 바삭 속 촉촉 반달 군만두, 이태원 명물'), null, 'https://thumb.wikimedia.org/wikipedia/commons/thumb/9/96/Jjin-mandu_3.jpg/960px-Jjin-mandu_3.jpg', true, 'Chloe Lim · CC BY 2.0', '2026-08-05T12:00:00+00:00'),
+  ('1386489124', (select id from public.reviews where place_id = '1386489124' and is_sample and comment = '게장정식 하나뿐, 알 꽉 차고 비린내 없음'), null, 'https://thumb.wikimedia.org/wikipedia/commons/thumb/5/53/Korean_seafood-Ganjang_gejang-01.jpg/960px-Korean_seafood-Ganjang_gejang-01.jpg', true, 'derivative work: Caspian blue (talk)
+Korean.cuisine-Ganjang_gejang_and_banchan-01.jpg: by LWY at flickr · CC BY 2.0', '2026-08-05T12:00:00+00:00'),
+  ('1386489124', (select id from public.reviews where place_id = '1386489124' and is_sample and comment = '게장정식 하나뿐, 알 꽉 차고 비린내 없음'), null, 'https://thumb.wikimedia.org/wikipedia/commons/thumb/b/b7/Korean.cuisine-Ganjang_gejang_and_banchan-01.jpg/960px-Korean.cuisine-Ganjang_gejang_and_banchan-01.jpg', true, 'by LWY at flickr · CC BY 2.0', '2026-08-06T12:00:00+00:00'),
+  ('469577034', (select id from public.reviews where place_id = '469577034' and is_sample and comment = '유자 들어간 시오라멘 상큼, 면 리필 무료'), null, 'https://thumb.wikimedia.org/wikipedia/commons/thumb/d/dc/Shoyu_Ramen.jpg/960px-Shoyu_Ramen.jpg', true, 'Guilhem Vellut · CC BY 2.0', '2026-08-05T12:00:00+00:00'),
+  ('1427835306', (select id from public.reviews where place_id = '1427835306' and is_sample and comment = '통영 자연산 잡어 다양, 돌장어회 별미'), null, 'https://thumb.wikimedia.org/wikipedia/commons/thumb/3/3e/Korean_cuisine-Hoe-01.jpg/960px-Korean_cuisine-Hoe-01.jpg', true, '*intacto · CC BY 2.0', '2026-08-05T12:00:00+00:00'),
+  ('1995791949', (select id from public.reviews where place_id = '1995791949' and is_sample and comment = '통창 남산 뷰 최고, 밤 9시 소등 이벤트'), null, 'https://thumb.wikimedia.org/wikipedia/commons/thumb/f/f0/Latte_art_-_London_Grind%2C_London%2C_UK.jpg/960px-Latte_art_-_London_Grind%2C_London%2C_UK.jpg', true, 'Bex Walton · CC BY 2.0', '2026-08-05T12:00:00+00:00');
 
 update public.places set sample_favorite_count = 29 where id = '775002048';
 update public.places set sample_favorite_count = 25 where id = '939156377';
@@ -49,6 +95,43 @@ update public.places set sample_favorite_count = 6 where id = '1963622308';
 update public.places set sample_favorite_count = 8 where id = '27342687';
 update public.places set sample_favorite_count = 8 where id = '1840452915';
 update public.places set sample_favorite_count = 7 where id = '19530747';
+update public.places set sample_favorite_count = 26 where id = '432101389';
+update public.places set sample_favorite_count = 23 where id = '971544748';
+update public.places set sample_favorite_count = 15 where id = '19041798';
+update public.places set sample_favorite_count = 17 where id = '1813473';
+update public.places set sample_favorite_count = 15 where id = '185719220';
+update public.places set sample_favorite_count = 16 where id = '283930207';
+update public.places set sample_favorite_count = 14 where id = '1729633606';
+update public.places set sample_favorite_count = 15 where id = '773394734';
+update public.places set sample_favorite_count = 10 where id = '596181447';
+update public.places set sample_favorite_count = 6 where id = '172187463';
+update public.places set sample_favorite_count = 4 where id = '1836394026';
+update public.places set sample_favorite_count = 8 where id = '380740588';
+update public.places set sample_favorite_count = 9 where id = '11162581';
+update public.places set sample_favorite_count = 14 where id = '1152103185';
+update public.places set sample_favorite_count = 11 where id = '466110144';
+update public.places set sample_favorite_count = 12 where id = '2118107039';
+update public.places set sample_favorite_count = 8 where id = '1607376461';
+update public.places set sample_favorite_count = 5 where id = '333701856';
+update public.places set sample_favorite_count = 10 where id = '10693894';
+update public.places set sample_favorite_count = 9 where id = '24188406';
+update public.places set sample_favorite_count = 7 where id = '12700169';
+update public.places set sample_favorite_count = 7 where id = '27209120';
+update public.places set sample_favorite_count = 11 where id = '20524244';
+update public.places set sample_favorite_count = 8 where id = '21393229';
+update public.places set sample_favorite_count = 10 where id = '18443799';
+update public.places set sample_favorite_count = 14 where id = '1851189141';
+update public.places set sample_favorite_count = 10 where id = '16794177';
+update public.places set sample_favorite_count = 11 where id = '1561286469';
+update public.places set sample_favorite_count = 9 where id = '9921124';
+update public.places set sample_favorite_count = 7 where id = '721715250';
+update public.places set sample_favorite_count = 9 where id = '26843634';
+update public.places set sample_favorite_count = 11 where id = '1386489124';
+update public.places set sample_favorite_count = 7 where id = '469577034';
+update public.places set sample_favorite_count = 10 where id = '1427835306';
+update public.places set sample_favorite_count = 9 where id = '1995791949';
+update public.places set sample_favorite_count = 10 where id = '1472388640';
+update public.places set sample_favorite_count = 7 where id = '10889757';
 
 -- 지우기:
 -- delete from public.photos where is_sample;

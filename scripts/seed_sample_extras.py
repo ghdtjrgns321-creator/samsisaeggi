@@ -28,6 +28,11 @@ def main() -> None:
         return find_place(key, collected)[0]
 
     photos = json.loads(PHOTOS_JSON.read_text(encoding="utf-8"))
+    paths = [photo["url"].split("?")[0] for items in photos.values() for photo in items]
+    if dupes := {p for p in paths if paths.count(p) > 1}:
+        raise SystemExit(
+            f"같은 사진이 두 번 들어 있어요 (photos.path 는 unique): {dupes}"
+        )
     photo_rows = []
     for key, items in photos.items():
         place_id = find_id(key)
@@ -38,7 +43,11 @@ def main() -> None:
                 f"(select id from public.reviews where place_id = {sql_str(place_id)} "
                 f"and is_sample and comment = {sql_str(review['comment'])})"
             )
-            artist = photo["artist"] if photo["artist"] not in ("", "me") else "Wikimedia Commons"  # 'me' = 올린 사람이 이름 대신 적은 값
+            artist = (
+                photo["artist"]
+                if photo["artist"] not in ("", "me")
+                else "Wikimedia Commons"
+            )  # 'me' = 올린 사람이 이름 대신 적은 값
             credit = f"{artist} · {photo['license']}"
             created_at = NOW - timedelta(
                 days=60 - i
